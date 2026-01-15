@@ -1,6 +1,25 @@
 <h1 align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=35&pause=1000&color=36BCF7&center=true&vCenter=true&width=600&lines=I'm+Ch+Manan;Frontend+Developer;Cybersecurity+Student;Complex+by+Nature" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=35&pause=1000&color=36BCF7&center=true&vCenter=true&width=500&lines=Hi,+I'm+Ch+Manan" alt="Typing SVG" />
 </h1>
+
+<h3 align="center">A passionate frontend developer from Kashmir</h3>
+
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=Abdul-Manan-C&show_icons=true&theme=tokyonight" alt="Stats" />
+</p>
+
+---
+
+### 🚀 About Me
+- 🔭 Working on **BusReservationSystem**
+- 🌱 Learning **C++, Web, CyberSecurity**
+- ⚡ Fun fact: **I think I am Complex**
+
+### 🛠️ Arsenal
+<p align="left">
+  <img src="https://skillicons.dev/icons?i=cpp,html,css,js,figma,git,linux,vscode&theme=dark" />
+</p>
+
 
 <p align="center">
   <img src="https://github-readme-streak-stats.herokuapp.com/?user=Abdul-Manan-C&theme=tokyonight&hide_border=false" alt="GitHub Streak" />
