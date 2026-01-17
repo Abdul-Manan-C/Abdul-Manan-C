@@ -1,24 +1,6 @@
-<div id="typing-container">
-  <img class="typing-line" src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&pause=1000&color=36BCF7&width=400&lines=Hi%20I%20am%20ChManan" />
-  <img class="typing-line" src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&pause=1000&color=36BCF7&width=400&lines=std::cout%20<<%20'Hello!'" />
-  <img class="typing-line" src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&pause=1000&color=36BCF7&width=400&lines=sudo%20dnf%20update" />
-  <img class="typing-line" src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&pause=1000&color=36BCF7&width=400&lines=sudo%20rm%20-rf%20feelings" />
-  <img class="typing-line" src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&pause=1000&color=36BCF7&width=400&lines=git%20clone%20skills" />
-</div>
-
-<script>
-  const lines = document.querySelectorAll('.typing-line');
-  let i = 0;
-  lines.forEach(line => line.style.display = 'none');
-  function showNextLine() {
-    lines.forEach(line => line.style.display = 'none');
-    lines[i].style.display = 'block';
-    i = (i + 1) % lines.length;
-  }
-  showNextLine();
-  setInterval(showNextLine, 2500); // 2.5s per line
-</script>
-
+<h1 align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=35&pause=1000&color=36BCF7&center=true&vCenter=true&width=500&lines=Hi+I+am+ChManan;std::cout+<<+Hello;sudo+dnf+update;git+clone+skills;run+script" alt="Typing Animation" />
+</h1> 
 <p align="center">
   <img src="https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif" width="60" alt="Arrow Down"/>
 </p>
