@@ -42,9 +42,9 @@
 </p>
 
 ### 🐍 GitHub Contributions
-<p align="center">
-   <img src="https://raw.githubusercontent.com/Abdul-Manan-C/Abdul-Manan-C/main/output/github-contribution-grid-snake.svg" alt="GitHub Snake" />
-</p>
+   <p align="center">
+  <img src="https://raw.githubusercontent.com/Abdul-Manan-C/main/output/github-contribution-grid-snake.svg" alt="GitHub Contribution Snake" />
+</p> 
 
 ### 📊 GitHub Stats
 <p align="center">
