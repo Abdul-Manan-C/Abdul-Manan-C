@@ -1,0 +1,28 @@
+name: Generate Snake Game
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # runs once every day at 00:00 UTC
+  workflow_dispatch: {}  # allows manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Generate Snake
+      uses: Platane/snk@v3
+      with:
+        github_user_name: Abdul-Manan-C
+        svg_out_path: output/github-contribution-grid-snake.svg
+        snake_color: '36BCF7' # your snake color (blue)
+
+    - name: Commit Snake
+      run: |
+        git config --local user.email "mananhanif01@gmail.com"
+        git config --local user.name "Ch Manan"
+        git add output/github-contribution-grid-snake.svg
+        git commit -m "Update GitHub Snake" || echo "No changes to commit"
+        git push
