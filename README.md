@@ -48,10 +48,11 @@
 
 ### 📊 GitHub Stats
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=Abdul-Manan-C&show_icons=true&theme=tokyonight&border_radius=12" alt="Stats" />
+  <img src="https://github-readme-stats-fast.vercel.app/api?username=Abdul-Manan-C&show_icons=true&theme=tokyonight&border_radius=12" alt="Stats" />
   <br/>
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Abdul-Manan-C&layout=compact&theme=tokyonight&border_radius=12" alt="Top Languages" />
+  <img src="https://github-readme-stats-fast.vercel.app/api/top-langs/?username=Abdul-Manan-C&layout=compact&theme=tokyonight&border_radius=12" alt="Top Languages" />
 </p>
+ 
 
 ### 🔗 Profile Summary Card
 <p align="center">
