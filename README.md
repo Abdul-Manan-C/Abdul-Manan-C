@@ -1,6 +1,6 @@
 <h1 align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=32&pause=1000&color=36BCF7&center=true&vCenter=true&width=700&lines=%23include+%3Ciostream%3E;,+int+main()%7B+std::cout+%3C%3C+'Hello+World!'%3B+return+0;%7D,+sudo+dnf+update,+sudo+apt+update,+git+clone+https%3A%2F%2Fgithub.com%2FAbdul-Manan-C,+echo+'Building+my+projects...',+./run.sh,+make+all,+python3+script.py" alt="Typing Animation" />
-</h1>
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=800&color=36BCF7&center=true&vCenter=true&width=400&repeat=true&lines=Hi+I+am+ChManan,+std::cout+<<+'Hello+World!',+sudo+dnf+update,+sudo+rm+-rf+feelings,+git+clone+skills,+build+projects,+run+script,+python+rocks,+learning+cybersec,+deploy+website,+echo+'fun+coding'" alt="Typing Animation" />
+</h1> 
 
 <p align="center">
   <img src="https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif" width="60" alt="Arrow Down"/>
