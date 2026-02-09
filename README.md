@@ -20,7 +20,7 @@
 - 🧠 **Who I am:** A frontend developer with a strong focus on **Cybersecurity, Linux, automation, and real-world tech systems.**
 - 🚀 **What I love:** Problem solving, building tools that *work* (not just look good), and exploring how things *actually* work under the hood.
 - 💻 **Current Work:**  
-  - Building **Bus Reservation System** (C++)
+  - Building **Bus-Reservation-System** (C++)
   - Practicing **ethical cybersecurity**
   - Automating tasks using Linux & scripts  
 - 📚 **Skills in progress:** Dev tools, security workflows, container tools, web development fundamentals.
@@ -31,7 +31,7 @@
 ## 🎯 Core Highlights
 
 ### 💼 Featured Project
-- 📌 **[Bus Reservation System](https://github.com/Abdul-Manan-C/BusReservationSystem)**  
+- 📌 **[Bus Reservation System](https://github.com/Abdul-Manan-C/Bus-Reservation-System)**  
   A C++ project focused on clear structure, OOP techniques, and real-world booking logic.  
   It showcases:
   - Object-oriented design
