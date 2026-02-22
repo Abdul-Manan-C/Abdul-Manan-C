@@ -1,3 +1,6 @@
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0A66C2&height=230&section=header&text=Abdul%20Manan&fontSize=70&animation=fadeIn&fontColor=ffffff" />
+</div>
 <h1 align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=35&pause=1000&color=36BCF7&center=true&vCenter=true&width=500&lines=Hi+I+am+ChManan;std::cout+<<+Hello;sudo+dnf+update;git+clone+skills;run+script" alt="Typing Animation" />
 </h1> 
