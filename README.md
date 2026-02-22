@@ -10,8 +10,7 @@
   <img src="https://github-widgetbox.vercel.app/api/profile?username=Abdul-Manan-C&data=followers,repositories,stars,commits&theme=dark" alt="GitHub WidgetBox"/>
 </p>
 <p align="center">
-  <img src="https://media.giphy.com/media/L05HgB2h6qICDs5Sms/giphy.gif" width="50" alt="Developer Working"/>
-</p>
+<img src="https://tryhackme-badges.s3.amazonaws.com/mananhanif01.png?v=1" alt="Your Image Badge" /></p>
 
 ---
 
