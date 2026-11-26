@@ -1,0 +1,126 @@
+{
+  "generated_at": "2026-11-26T22:16:40Z",
+  "login": "Abdul-Manan-C",
+  "name": "Ch Manan",
+  "followers": 31,
+  "public_repos": 14,
+  "public_repos_total": 18,
+  "contributions": 311,
+  "current_streak": 216,
+  "longest_streak": 216,
+  "total_stars": 26,
+  "repos": [
+    {
+      "name": "Abdul-Manan-C",
+      "url": "https://github.com/Abdul-Manan-C/Abdul-Manan-C",
+      "language": null,
+      "stars": 2,
+      "pushed_at": "2026-11-26T06:58:55Z",
+      "description": "Config files for my GitHub profile."
+    },
+    {
+      "name": "CYNEX-Portfolio",
+      "url": "https://github.com/Abdul-Manan-C/CYNEX-Portfolio",
+      "language": "TypeScript",
+      "stars": 3,
+      "pushed_at": "2026-07-11T09:25:45Z",
+      "description": "https://abdulmannan.galaxydev.pk"
+    },
+    {
+      "name": "movixstudio",
+      "url": "https://github.com/Abdul-Manan-C/movixstudio",
+      "language": "HTML",
+      "stars": 0,
+      "pushed_at": "2026-07-09T19:12:51Z",
+      "description": ""
+    },
+    {
+      "name": "movix",
+      "url": "https://github.com/Abdul-Manan-C/movix",
+      "language": "HTML",
+      "stars": 0,
+      "pushed_at": "2026-04-12T20:53:44Z",
+      "description": ""
+    },
+    {
+      "name": "super-marketing",
+      "url": "https://github.com/Abdul-Manan-C/super-marketing",
+      "language": "HTML",
+      "stars": 2,
+      "pushed_at": "2026-03-31T07:49:26Z",
+      "description": ""
+    },
+    {
+      "name": "ironcore",
+      "url": "https://github.com/Abdul-Manan-C/ironcore",
+      "language": "HTML",
+      "stars": 3,
+      "pushed_at": "2026-03-19T11:06:29Z",
+      "description": ""
+    },
+    {
+      "name": "portfolio",
+      "url": "https://github.com/Abdul-Manan-C/portfolio",
+      "language": "HTML",
+      "stars": 2,
+      "pushed_at": "2026-03-19T10:24:28Z",
+      "description": ""
+    },
+    {
+      "name": "flamehouse",
+      "url": "https://github.com/Abdul-Manan-C/flamehouse",
+      "language": "CSS",
+      "stars": 1,
+      "pushed_at": "2026-03-19T08:09:30Z",
+      "description": ""
+    },
+    {
+      "name": "nullshield",
+      "url": "https://github.com/Abdul-Manan-C/nullshield",
+      "language": "HTML",
+      "stars": 2,
+      "pushed_at": "2026-03-18T14:45:55Z",
+      "description": ""
+    },
+    {
+      "name": "novamind-ai",
+      "url": "https://github.com/Abdul-Manan-C/novamind-ai",
+      "language": "HTML",
+      "stars": 1,
+      "pushed_at": "2026-03-18T07:30:10Z",
+      "description": ""
+    },
+    {
+      "name": "mac-vision",
+      "url": "https://github.com/Abdul-Manan-C/mac-vision",
+      "language": "HTML",
+      "stars": 1,
+      "pushed_at": "2026-03-18T07:27:11Z",
+      "description": ""
+    },
+    {
+      "name": "Bus-Reservation-System",
+      "url": "https://github.com/Abdul-Manan-C/Bus-Reservation-System",
+      "language": "C++",
+      "stars": 3,
+      "pushed_at": "2026-03-14T04:32:06Z",
+      "description": ""
+    },
+    {
+      "name": "autocore",
+      "url": "https://github.com/Abdul-Manan-C/autocore",
+      "language": "Python",
+      "stars": 5,
+      "pushed_at": "2026-03-13T17:10:59Z",
+      "description": ""
+    },
+    {
+      "name": "MY_HTML-PRACTICE",
+      "url": "https://github.com/Abdul-Manan-C/MY_HTML-PRACTICE",
+      "language": "HTML",
+      "stars": 1,
+      "pushed_at": "2024-07-25T16:45:50Z",
+      "description": ""
+    }
+  ]
+}
