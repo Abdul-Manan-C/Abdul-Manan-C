@@ -227,30 +227,23 @@ def radar() -> str:
     ey = CY - RAD * math.cos(span)
     parts.append(
         f'<g class="spin"><path d="M {CX} {CY} L {CX} {CY - RAD} A {RAD} {RAD} 0 0 1 {ex:.1f} {ey:.1f} Z" '
-        f'fill="url(#sweep)" opacity="0.9">'
-        f'<animateTransform attributeName="transform" type="rotate" from="0 {CX} {CY}" '
-        f'to="360 {CX} {CY}" dur="9s" repeatCount="indefinite"/></path></g>'
+        f'fill="url(#sweep)" opacity="0.9"/></g>'
     )
 
     # dashed outer ring
     parts.append(
-        f'<circle class="spin" cx="{CX}" cy="{CY}" r="36" fill="none" stroke="#30363d" stroke-width="1" '
-        f'stroke-dasharray="2 6">'
-        f'<animateTransform attributeName="transform" type="rotate" from="0 {CX} {CY}" '
-        f'to="360 {CX} {CY}" dur="26s" repeatCount="indefinite"/></circle>'
+        f'<circle class="spin ring" cx="{CX}" cy="{CY}" r="36" fill="none" stroke="#30363d" stroke-width="1" '
+        f'stroke-dasharray="2 6"/>'
     )
 
     # blips
-    blips = [(116, 108, "#3fb950"), (198, 96, "#d29922"), (188, 198, "#58a6ff"), (104, 182, "#3fb950")]
+    blips = [(116, 108, "#3fb949"), (198, 96, "#d29922"), (188, 198, "#58a6ff"), (104, 182, "#3fb949")]
     for bx, by, colour in blips:
         parts.append(
-            f'<circle cx="{bx}" cy="{by}" r="3.5" fill="{colour}">'
-            f'<animate attributeName="opacity" values="1;.35;1" dur="2.6s" repeatCount="indefinite"/></circle>'
+            f'<circle class="pulse" cx="{bx}" cy="{by}" r="3.5" fill="{colour}"/>'
         )
         parts.append(
-            f'<circle class="ping" cx="{bx}" cy="{by}" r="3.5" fill="none" stroke="{colour}" stroke-width="1" opacity="0">'
-            f'<animate attributeName="r" values="3.5;17" dur="2.6s" repeatCount="indefinite"/>'
-            f'<animate attributeName="opacity" values=".75;0" dur="2.6s" repeatCount="indefinite"/></circle>'
+            f'<circle class="ping" cx="{bx}" cy="{by}" r="3.5" fill="none" stroke="{colour}" stroke-width="1" opacity="0"/>'
         )
 
     # core hexagon
@@ -273,20 +266,17 @@ def radar() -> str:
 
 
 def print_in(delay: float) -> str:
-    """SMIL entrance that fails safe: base value stays visible, animation only
-    overrides it once it starts (CSS keyframes would leave the text hidden if
-    the animation timeline never advances)."""
-    return (
-        f'<animate attributeName="opacity" from="0" to="1" begin="{delay:.2f}s" dur="0.45s" fill="freeze"/>'
-        f'<animateTransform attributeName="transform" type="translate" from="0 6" to="0 0" '
-        f'begin="{delay:.2f}s" dur="0.45s" fill="freeze"/>'
-    )
+    """Opacity entrance that fails safe: the base value stays visible, the SMIL
+    animation only overrides it once it starts (a CSS keyframe would leave the
+    text hidden if the animation timeline never advances)."""
+    return f'<animate attributeName="opacity" from="0" to="1" begin="{delay:.2f}s" dur="0.45s" fill="freeze"/>'
 
 
 def console(snapshot: dict) -> str:
     parts = []
     parts.append(
-        f'<text x="320" y="44" font-family="{MONO}" font-size="15" fill="#3fb949">'
+        f'<text class="print" x="320" y="44" font-family="{MONO}" font-size="15" fill="#3fb949" '
+        f'style="animation-delay:.10s">'
         f'<tspan fill="#3fb949">cynex@kali</tspan><tspan fill="#8b949e">:~$ </tspan>'
         f'<tspan fill="#c9d1d9">whoami</tspan>{print_in(0.10)}</text>'
     )
@@ -294,32 +284,29 @@ def console(snapshot: dict) -> str:
     for i, (label, value) in enumerate(IDENTITY):
         delay = 0.34 + i * 0.11
         parts.append(
-            f'<text x="320" y="{84 + i * 30}" font-family="{MONO}" font-size="15">'
+            f'<text class="print" x="320" y="{84 + i * 30}" font-family="{MONO}" font-size="15" '
+            f'style="animation-delay:{delay:.2f}s">'
             f'<tspan fill="#58a6ff">{html.escape(label.ljust(9))}</tspan>'
             f'<tspan fill="#c9d1d9">{html.escape(value)}</tspan>{print_in(delay)}</text>'
         )
 
     cursor_x = 320 + 9 * 9 + len("cynex.online") * 9 + 10
     parts.append(
-        f'<rect x="{cursor_x}" y="248" width="8" height="16" fill="#3fb949">'
-        f'<animate attributeName="opacity" values="1;0;1" dur="1.1s" repeatCount="indefinite"/></rect>'
+        f'<rect class="cursor" x="{cursor_x}" y="248" width="8" height="16" fill="#3fb949"/>'
     )
 
     stats = (
         f"{snapshot['contributions']} contributions \u00b7 {snapshot['public_repos']} repos \u00b7 "
         f"{snapshot['followers']} followers \u00b7 {snapshot['total_stars']} stars"
     )
+    parts.append(f'<circle class="live" cx="326" cy="296" r="3.5" fill="#3fb949"/>')
     parts.append(
-        f'<circle cx="326" cy="296" r="3.5" fill="#3fb949">'
-        f'<animate attributeName="opacity" values="1;.25;1" dur="2s" repeatCount="indefinite"/></circle>'
+        f'<text class="print" x="340" y="300" font-family="{MONO}" font-size="12.5" fill="#8b949e" '
+        f'style="animation-delay:1.25s">{html.escape(stats)}{print_in(1.25)}</text>'
     )
     parts.append(
-        f'<text x="340" y="300" font-family="{MONO}" font-size="12.5" fill="#8b949e">'
-        f'{html.escape(stats)}{print_in(1.25)}</text>'
-    )
-    parts.append(
-        f'<text x="864" y="300" text-anchor="end" font-family="{MONO}" font-size="12" fill="#6e7681">'
-        f'refreshed daily{print_in(1.35)}</text>'
+        f'<text class="print" x="864" y="300" text-anchor="end" font-family="{MONO}" font-size="12" '
+        f'fill="#6e7681" style="animation-delay:1.35s">refreshed daily{print_in(1.35)}</text>'
     )
     return "".join(parts)
 
@@ -327,7 +314,22 @@ def console(snapshot: dict) -> str:
 def render_hero(snapshot: dict) -> str:
     style = (
         "<style>"
-        "@media (prefers-reduced-motion: reduce){.spin,.ping{display:none}}"
+        ".spin,.print{transform-box:view-box;transform-origin:150px 148px}"
+        ".ping{transform-box:fill-box;transform-origin:center}"
+        "@media (prefers-reduced-motion: no-preference){"
+        ".spin{animation:sweep 9s linear infinite}"
+        ".spin.ring{animation-duration:26s}"
+        ".ping{animation:ping 2.6s ease-out infinite}"
+        ".pulse,.live{animation:pulse 2.6s ease-in-out infinite}"
+        ".live{animation-duration:2s}"
+        ".cursor{animation:blink 1.1s steps(1,end) infinite}"
+        ".print{animation:rise .5s ease-out both}"
+        "}"
+        "@keyframes sweep{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}"
+        "@keyframes ping{0%{transform:scale(1);opacity:.75}70%,100%{transform:scale(4.5);opacity:0}}"
+        "@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}"
+        "@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}"
+        "@keyframes rise{from{transform:translateY(6px)}to{transform:translateY(0)}}"
         "</style>"
     )
     defs = (
