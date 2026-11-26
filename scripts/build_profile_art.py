@@ -687,6 +687,55 @@ def render_activity(snapshot: dict) -> str:
 
 
 # --------------------------------------------------------------------------- #
+# stack band
+# --------------------------------------------------------------------------- #
+
+SW, SH = 846, 214
+
+STACK = [
+    ("FRONTEND", "#58a6ff", ["Next.js", "React", "TypeScript", "Tailwind", "Vite"]),
+    ("MOTION / 3D", "#d29922", ["Three.js", "GSAP", "Framer Motion", "WebGL"]),
+    ("BACKEND / DATA", "#3fb949", ["Node.js", "Python", "PostgreSQL", "Prisma", "REST"]),
+    ("SECURITY / OPS", "#f778ba", ["Kali", "Bash", "Nmap", "Burp Suite", "Docker"]),
+]
+
+
+def render_stack() -> str:
+    """A quiet toolbelt: four grouped columns of real, used technologies."""
+    gutter = 16
+    col_w = (SW - gutter * 3) / 4
+    parts = [f'<g class="enter">{fade_in(0.08)}{panel(SW, SH)}']
+
+    for index, (label, accent, items) in enumerate(STACK):
+        x = 14 + index * (col_w + gutter)
+        parts.append(
+            f'<text x="{x:.1f}" y="34" font-family="{MONO}" font-size="11" letter-spacing="1.8" '
+            f'fill="{accent}">{html.escape(label)}</text>'
+        )
+        parts.append(
+            f'<rect x="{x:.1f}" y="44" width="34" height="2" rx="1" fill="{accent}" opacity="0.65"/>'
+        )
+        y = 62
+        for item in items:
+            width = 7.0 * len(item) + 22
+            parts.append(
+                f'<g><rect x="{x:.1f}" y="{y}" width="{width:.1f}" height="24" rx="12" '
+                f'fill="#161b22" stroke="#30363d"/>'
+                f'<circle cx="{x + 13:.1f}" cy="{y + 12}" r="3" fill="{accent}"/>'
+                f'<text x="{x + 23:.1f}" y="{y + 16}" font-family="{MONO}" font-size="11" '
+                f'fill="#c9d1d9">{html.escape(item)}</text></g>'
+            )
+            y += 30
+
+    parts.append("</g>")
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{SW}" height="{SH}" viewBox="0 0 {SW} {SH}" '
+        f'role="img" aria-label="Technology stack: frontend, motion and 3D, backend and data, security and operations">'
+        f"{base_style()}{''.join(parts)}</svg>\n"
+    )
+
+
+# --------------------------------------------------------------------------- #
 # README repository index
 # --------------------------------------------------------------------------- #
 
@@ -763,6 +812,7 @@ def main() -> int:
         write(cards / f"repo-{name.lower()}.svg", render_repo_card(repo, description, index))
 
     write(ROOT / "assets" / "activity.svg", render_activity(snapshot))
+    write(ROOT / "assets" / "stack.svg", render_stack())
 
     readme_path = ROOT / "README.md"
     if readme_path.exists():

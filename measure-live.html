@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>measure live github</title></head><body>
+<pre id="out">running…</pre>
+<script>
+(async () => {
+ try {
+  const frame = document.createElement('iframe');
+  frame.style.width = '1280px'; frame.style.height = '900px';
+  frame.src = 'https://github.com/Abdul-Manan-C';
+  document.body.appendChild(frame);
+  await new Promise(r => frame.addEventListener('load', r, {once:true}));
+  await new Promise(r => setTimeout(r, 6000));
+  const doc = frame.contentDocument;
+  const lines = [];
+  const readme = doc.querySelector('#readme, .markdown-body');
+  if (readme) {
+    const r = readme.getBoundingClientRect();
+    lines.push(`readme container width=${r.width.toFixed(0)} left=${r.left.toFixed(0)} right=${r.right.toFixed(0)}`);
+    const imgs = [...readme.querySelectorAll('img')].slice(0, 24);
+    imgs.forEach(i => {
+      const b = i.getBoundingClientRect();
+      lines.push(`  img ${(i.getAttribute('src')||'').split('/').pop().slice(0,40).padEnd(42)} ${b.width.toFixed(0)}x${b.height.toFixed(0)} natural=${i.naturalWidth}x${i.naturalHeight}`);
+    });
+  } else lines.push('no #readme / .markdown-body found');
+  lines.push(`viewport=${frame.contentWindow.innerWidth}`);
+  document.getElementById('out').textContent = lines.join('\n');
+ } catch (e) { document.getElementById('out').textContent = 'ERROR: ' + (e && e.stack || e); }
+})();
+</script></body></html>

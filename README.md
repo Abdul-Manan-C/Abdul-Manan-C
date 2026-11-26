@@ -30,35 +30,37 @@ I work directly with founders, stores and agencies in the US, UK, UAE and Saudi 
 
 <table>
   <tr>
-    <td width="33%" align="center" valign="top">
-      <a href="https://laxitech.com/"><img src="./assets/screens/laxitech.jpg" alt="Laxitech website" width="270" /></a><br />
+    <td width="50%" align="center" valign="top">
+      <a href="https://laxitech.com/"><img src="./assets/screens/laxitech.jpg" alt="Laxitech website" width="400" /></a><br />
       <b><a href="https://laxitech.com/">Laxitech</a></b><br />
       3D MacBook hero stage with WebGL aurora lighting, isometric engineering illustrations, Cloud VPS / GXMail / GXNotify, obsidian + ivory themes
     </td>
-    <td width="33%" align="center" valign="top">
-      <a href="https://www.vixion.studio/"><img src="./assets/screens/vixion.jpg" alt="Vixion Studio website" width="270" /></a><br />
+    <td width="50%" align="center" valign="top">
+      <a href="https://www.vixion.studio/"><img src="./assets/screens/vixion.jpg" alt="Vixion Studio website" width="400" /></a><br />
       <b><a href="https://www.vixion.studio/">Vixion Studio</a></b><br />
       Creative studio built from a single visual reference — dark-to-light scroll transition, package comparison, custom domain email, AI concierge that hands leads to WhatsApp
     </td>
-    <td width="33%" align="center" valign="top">
-      <a href="https://www.movixstudio.com/"><img src="./assets/screens/movix.jpg" alt="Movix Studio website" width="270" /></a><br />
+  </tr>
+  <tr>
+    <td align="center" valign="top">
+      <a href="https://www.movixstudio.com/"><img src="./assets/screens/movix.jpg" alt="Movix Studio website" width="400" /></a><br />
       <b><a href="https://www.movixstudio.com/">Movix Studio</a></b><br />
       Video production agency platform — instant HD showreel without buffering, custom domain, indexed on Google within 20 minutes of launch
     </td>
-  </tr>
-  <tr>
-    <td width="33%" align="center" valign="top">
-      <a href="https://www.commercelions.com/"><img src="./assets/screens/commerce-lions.jpg" alt="Commerce Lions website" width="270" /></a><br />
+    <td align="center" valign="top">
+      <a href="https://www.commercelions.com/"><img src="./assets/screens/commerce-lions.jpg" alt="Commerce Lions website" width="400" /></a><br />
       <b><a href="https://www.commercelions.com/">Commerce Lions</a></b><br />
       Education and mentorship portal — one-click Google Sign-In, protected member database, SEO-ready pages, WhatsApp cohort onboarding
     </td>
-    <td width="33%" align="center" valign="top">
-      <a href="https://www.superluxuries.store/"><img src="./assets/screens/super-luxuries.jpg" alt="Super Luxuries website" width="270" /></a><br />
+  </tr>
+  <tr>
+    <td align="center" valign="top">
+      <a href="https://www.superluxuries.store/"><img src="./assets/screens/super-luxuries.jpg" alt="Super Luxuries website" width="400" /></a><br />
       <b><a href="https://www.superluxuries.store/">Super Luxuries</a></b><br />
       Dubai + London luxury boutique — role-based staff accounts, cloud media hosting, WhatsApp personal-shopper checkout
     </td>
-    <td width="33%" align="center" valign="top">
-      <a href="https://www.macvision.store/"><img src="./assets/screens/mac-vision.jpg" alt="Mac Vision website" width="270" /></a><br />
+    <td align="center" valign="top">
+      <a href="https://www.macvision.store/"><img src="./assets/screens/mac-vision.jpg" alt="Mac Vision website" width="400" /></a><br />
       <b><a href="https://www.macvision.store/">Mac Vision</a></b><br />
       Apple and tech retail store — founder-locked dashboard, one-click bulk price adjustment, background uploads, itemized WhatsApp orders
     </td>
@@ -66,6 +68,14 @@ I work directly with founders, stores and agencies in the US, UK, UAE and Saudi 
 </table>
 
 Delivery details and case studies: [cynex.online/works](https://cynex.online/works)
+
+## Toolbelt
+
+<div align="center">
+
+<img src="./assets/stack.svg" alt="Technology stack" width="846" />
+
+</div>
 
 ## Selected work
 
@@ -153,6 +163,7 @@ GitHub REST API ─┐
 contributions ───┘                              ├─→ assets/cards/*.svg
                                                 ├─→ assets/activity.svg
 live platforms ─→ scripts/cdp_capture.mjs ─────┴─→ assets/screens/*.jpg
+                                                ├─→ assets/stack.svg
                                                 └─→ the repository table above
 ```
 
