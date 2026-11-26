@@ -5,4 +5,5 @@ __pycache__/
 # local audit harnesses (not part of the published profile)
 check.html
 measure.html
+measure-live.html
 audit-*.html

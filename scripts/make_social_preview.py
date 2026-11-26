@@ -9,6 +9,7 @@ here and uploaded once by hand:
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -21,6 +22,7 @@ from build_profile_art import DISPLAY, MONO, radar  # noqa: E402
 W, H = 1280, 640
 OUT_SVG = ROOT / "assets" / "social-preview.svg"
 OUT_PNG = ROOT / "assets" / "social-preview.png"
+SNAPSHOT = ROOT / "data" / "profile.json"
 
 CHROME_CANDIDATES = ["google-chrome", "google-chrome-stable", "chromium", "chromium-browser"]
 
@@ -66,7 +68,17 @@ def build_svg() -> str:
         "</pattern>"
         "</defs>"
     )
-    stats = "6 live platforms   \u00b7   313 contributions   \u00b7   14 repos   \u00b7   31 followers"
+    stats = ""
+    if SNAPSHOT.exists():
+        snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
+        stats = (
+            f"{snapshot.get('public_repos', 0)} public repos   \u00b7   "
+            f"{snapshot.get('contributions', 0)} contributions   \u00b7   "
+            f"{snapshot.get('followers', 0)} followers   \u00b7   "
+            f"{snapshot.get('total_stars', 0)} stars"
+        )
+    if not stats:
+        stats = "CYNEX Studio   \u00b7   github.com/Abdul-Manan-C"
     body = (
         f'<rect width="{W}" height="{H}" fill="#0d1117"/>'
         f'<rect width="{W}" height="{H}" fill="url(#glow)"/>'
