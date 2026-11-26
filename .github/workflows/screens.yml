@@ -1,0 +1,35 @@
+name: Platform Screenshots
+
+on:
+  schedule:
+    - cron: "24 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Capture live platform screenshots
+        run: node scripts/cdp_capture.mjs assets/screens
+
+      - name: Render social preview
+        run: python scripts/make_social_preview.py
+
+      - name: Commit refreshed screenshots
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: refresh platform screenshots [skip ci]"
+          file_pattern: "assets/screens/*.jpg assets/social-preview.png assets/social-preview.svg"

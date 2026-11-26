@@ -1,21 +1,93 @@
 {
-  "generated_at": "2026-11-26T22:26:59Z",
+  "generated_at": "2026-11-26T23:34:45Z",
   "login": "Abdul-Manan-C",
   "name": "Ch Manan",
   "followers": 31,
   "public_repos": 14,
   "public_repos_total": 18,
-  "contributions": 312,
+  "contributions": 313,
   "current_streak": 216,
   "longest_streak": 216,
+  "active_days": 234,
   "total_stars": 26,
+  "busiest_day": {
+    "date": "2026-01-18",
+    "count": 15
+  },
+  "busiest_month": {
+    "key": "2026-03",
+    "label": "Mar",
+    "count": 39
+  },
+  "monthly": [
+    {
+      "key": "2025-12",
+      "label": "Dec",
+      "count": 0
+    },
+    {
+      "key": "2026-01",
+      "label": "Jan",
+      "count": 23
+    },
+    {
+      "key": "2026-02",
+      "label": "Feb",
+      "count": 20
+    },
+    {
+      "key": "2026-03",
+      "label": "Mar",
+      "count": 39
+    },
+    {
+      "key": "2026-04",
+      "label": "Apr",
+      "count": 9
+    },
+    {
+      "key": "2026-05",
+      "label": "May",
+      "count": 31
+    },
+    {
+      "key": "2026-06",
+      "label": "Jun",
+      "count": 33
+    },
+    {
+      "key": "2026-07",
+      "label": "Jul",
+      "count": 38
+    },
+    {
+      "key": "2026-08",
+      "label": "Aug",
+      "count": 31
+    },
+    {
+      "key": "2026-09",
+      "label": "Sep",
+      "count": 30
+    },
+    {
+      "key": "2026-10",
+      "label": "Oct",
+      "count": 31
+    },
+    {
+      "key": "2026-11",
+      "label": "Nov",
+      "count": 28
+    }
+  ],
   "repos": [
     {
       "name": "Abdul-Manan-C",
       "url": "https://github.com/Abdul-Manan-C/Abdul-Manan-C",
       "language": "Python",
       "stars": 2,
-      "pushed_at": "2026-11-26T22:26:29Z",
+      "pushed_at": "2026-11-26T22:27:00Z",
       "description": "Config files for my GitHub profile."
     },
     {

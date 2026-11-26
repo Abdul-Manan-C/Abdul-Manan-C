@@ -16,18 +16,54 @@ Motivated by Islam. Linux daily driver: Fedora 43 with Kali in Distrobox.
 
 ---
 
+<table>
+  <tr>
+    <td width="33%" align="center"><a href="https://cynex.online/works"><img src="./assets/cards/tile-build.svg" alt="6 platforms in production" width="260" /></a></td>
+    <td width="33%" align="center"><a href="https://github.com/Abdul-Manan-C/autocore"><img src="./assets/cards/tile-security.svg" alt="Contribution streak" width="260" /></a></td>
+    <td width="33%" align="center"><a href="https://cynex.online"><img src="./assets/cards/tile-studio.svg" alt="10 engineering disciplines" width="260" /></a></td>
+  </tr>
+</table>
+
 ## Six platforms in production
 
 I work directly with founders, stores and agencies in the US, UK, UAE and Saudi Arabia. Every build is end-to-end — direction, design, custom code, deployment, DNS, business email and post-launch care — not a template with the logo swapped.
 
-| Platform | What it does | Live |
-|---|---|---|
-| **Laxitech** | 3D MacBook hero stage with WebGL aurora lighting, isometric engineering illustrations, Cloud VPS / GXMail / GXNotify, obsidian + ivory themes | [laxitech.com](https://laxitech.com/) |
-| **Vixion Studio** | Creative studio built from a single visual reference — dark-to-light scroll transition, package comparison, custom domain email, AI concierge that hands leads to WhatsApp | [vixion.studio](https://www.vixion.studio/) |
-| **Movix Studio** | Video production agency platform — instant HD showreel without buffering, custom domain, indexed on Google within 20 minutes of launch | [movixstudio.com](https://www.movixstudio.com/) |
-| **Commerce Lions** | Education and mentorship portal — one-click Google Sign-In, protected member database, SEO-ready pages, WhatsApp cohort onboarding | [commercelions.com](https://www.commercelions.com/) |
-| **Super Luxuries** | Dubai + London luxury boutique — role-based staff accounts, cloud media hosting, WhatsApp personal-shopper checkout | [superluxuries.store](https://www.superluxuries.store/) |
-| **Mac Vision** | Apple and tech retail store — founder-locked dashboard, one-click bulk price adjustment, background uploads, itemized WhatsApp orders | [macvision.store](https://www.macvision.store/) |
+<table>
+  <tr>
+    <td width="33%" align="center" valign="top">
+      <a href="https://laxitech.com/"><img src="./assets/screens/laxitech.jpg" alt="Laxitech website" width="270" /></a><br />
+      <b><a href="https://laxitech.com/">Laxitech</a></b><br />
+      3D MacBook hero stage with WebGL aurora lighting, isometric engineering illustrations, Cloud VPS / GXMail / GXNotify, obsidian + ivory themes
+    </td>
+    <td width="33%" align="center" valign="top">
+      <a href="https://www.vixion.studio/"><img src="./assets/screens/vixion.jpg" alt="Vixion Studio website" width="270" /></a><br />
+      <b><a href="https://www.vixion.studio/">Vixion Studio</a></b><br />
+      Creative studio built from a single visual reference — dark-to-light scroll transition, package comparison, custom domain email, AI concierge that hands leads to WhatsApp
+    </td>
+    <td width="33%" align="center" valign="top">
+      <a href="https://www.movixstudio.com/"><img src="./assets/screens/movix.jpg" alt="Movix Studio website" width="270" /></a><br />
+      <b><a href="https://www.movixstudio.com/">Movix Studio</a></b><br />
+      Video production agency platform — instant HD showreel without buffering, custom domain, indexed on Google within 20 minutes of launch
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center" valign="top">
+      <a href="https://www.commercelions.com/"><img src="./assets/screens/commerce-lions.jpg" alt="Commerce Lions website" width="270" /></a><br />
+      <b><a href="https://www.commercelions.com/">Commerce Lions</a></b><br />
+      Education and mentorship portal — one-click Google Sign-In, protected member database, SEO-ready pages, WhatsApp cohort onboarding
+    </td>
+    <td width="33%" align="center" valign="top">
+      <a href="https://www.superluxuries.store/"><img src="./assets/screens/super-luxuries.jpg" alt="Super Luxuries website" width="270" /></a><br />
+      <b><a href="https://www.superluxuries.store/">Super Luxuries</a></b><br />
+      Dubai + London luxury boutique — role-based staff accounts, cloud media hosting, WhatsApp personal-shopper checkout
+    </td>
+    <td width="33%" align="center" valign="top">
+      <a href="https://www.macvision.store/"><img src="./assets/screens/mac-vision.jpg" alt="Mac Vision website" width="270" /></a><br />
+      <b><a href="https://www.macvision.store/">Mac Vision</a></b><br />
+      Apple and tech retail store — founder-locked dashboard, one-click bulk price adjustment, background uploads, itemized WhatsApp orders
+    </td>
+  </tr>
+</table>
 
 Delivery details and case studies: [cynex.online/works](https://cynex.online/works)
 
@@ -35,39 +71,27 @@ Delivery details and case studies: [cynex.online/works](https://cynex.online/wor
 
 <table>
   <tr>
-    <td width="50%" valign="top">
-      <b><a href="https://github.com/Abdul-Manan-C/autocore">AUTOCORE</a></b><br>
-      Automated pentest recon & enumeration orchestrator. Bash v3 runs the pipeline on any distro; Python v4 adds a TUI, AI analysis, CVE lookup and attack planning.<br>
-      <code>bash</code> <code>python</code> <code>textual</code> <code>llm</code> &nbsp;★5
+    <td width="50%" align="center" valign="top">
+      <a href="https://github.com/Abdul-Manan-C/autocore"><img src="./assets/cards/repo-autocore.svg" alt="AUTOCORE" width="390" /></a>
     </td>
-    <td width="50%" valign="top">
-      <b><a href="https://github.com/Abdul-Manan-C/CYNEX-Portfolio">CYNEX Portfolio</a></b><br>
-      Cyber-themed portfolio — terminal simulation, intrusion game and a live system HUD.<br>
-      <code>react</code> <code>typescript</code> <code>tailwind</code> <code>framer-motion</code> &nbsp;★3
+    <td width="50%" align="center" valign="top">
+      <a href="https://github.com/Abdul-Manan-C/CYNEX-Portfolio"><img src="./assets/cards/repo-cynex-portfolio.svg" alt="CYNEX Portfolio" width="390" /></a>
     </td>
   </tr>
   <tr>
-    <td valign="top">
-      <b><a href="https://github.com/Abdul-Manan-C/nullshield">NullShield Security</a></b><br>
-      Security services site — penetration testing, SOC monitoring and defensive hardening for the modern enterprise.<br>
-      <code>html</code> <code>css</code> <code>js</code> &nbsp;★2
+    <td align="center" valign="top">
+      <a href="https://github.com/Abdul-Manan-C/nullshield"><img src="./assets/cards/repo-nullshield.svg" alt="NullShield Security" width="390" /></a>
     </td>
-    <td valign="top">
-      <b><a href="https://github.com/Abdul-Manan-C/ironcore">IronCore Gym</a></b><br>
-      Fitness platform — dashboard, pricing, programmes and trainers, with a responsive mobile build.<br>
-      <code>html</code> <code>css</code> <code>js</code> &nbsp;★3
+    <td align="center" valign="top">
+      <a href="https://github.com/Abdul-Manan-C/ironcore"><img src="./assets/cards/repo-ironcore.svg" alt="IronCore Gym" width="390" /></a>
     </td>
   </tr>
   <tr>
-    <td valign="top">
-      <b><a href="https://github.com/Abdul-Manan-C/Bus-Reservation-System">Bus Reservation System</a></b><br>
-      C++ console app — add buses, reserve seats, print reports. No database, file-based storage.<br>
-      <code>c++</code> &nbsp;★3
+    <td align="center" valign="top">
+      <a href="https://github.com/Abdul-Manan-C/Bus-Reservation-System"><img src="./assets/cards/repo-bus-reservation-system.svg" alt="Bus Reservation System" width="390" /></a>
     </td>
-    <td valign="top">
-      <b><a href="https://github.com/Abdul-Manan-C/flamehouse">FlameHouse</a></b><br>
-      Restaurant site template with a one-file token theme system — restaurant, gym or cafe in one edit.<br>
-      <code>html</code> <code>css</code> <code>js</code> &nbsp;<a href="https://abdul-manan-c.github.io/flamehouse">live</a>
+    <td align="center" valign="top">
+      <a href="https://github.com/Abdul-Manan-C/flamehouse"><img src="./assets/cards/repo-flamehouse.svg" alt="FlameHouse" width="390" /></a>
     </td>
   </tr>
 </table>
@@ -109,9 +133,30 @@ Every public repository under my own account, listed straight from the GitHub AP
 
 <div align="center">
 
+<img src="./assets/activity.svg" alt="Monthly contribution activity" width="880" />
+
+</div>
+
+<div align="center">
+
 <img src="./output/github-contribution-grid-snake.svg" alt="Contribution graph" />
 
 </div>
+
+## This README builds itself
+
+A GitHub README cannot run JavaScript, but it can load SVG images — and an SVG carries its own CSS animations, embedded fonts and counters. So every visual above is drawn by one script from real data, and GitHub Actions redraws it every morning.
+
+```text
+GitHub REST API ─┐
+                 ├─→ scripts/build_profile_art.py ─→ assets/hero.svg
+contributions ───┘                              ├─→ assets/cards/*.svg
+                                                ├─→ assets/activity.svg
+live platforms ─→ scripts/cdp_capture.mjs ─────┴─→ assets/screens/*.jpg
+                                                └─→ the repository table above
+```
+
+No badge wall, no third-party card service, no manual editing — the numbers in the console, the tiles, the chart and the table are all read from GitHub at build time.
 
 ## Connect
 
@@ -125,6 +170,6 @@ Every public repository under my own account, listed straight from the GitHub AP
 
 *© 2026 · Abdul Manan (CH Manan) · CYNEX Studio, Azad Kashmir*
 
-This profile renders itself — the console art and the repository table are generated by `scripts/build_profile_art.py` and refreshed daily by GitHub Actions.
+This profile renders itself — the console art, the cards, the chart and the repository table are generated by `scripts/build_profile_art.py` and refreshed daily by GitHub Actions.
 
 </div>

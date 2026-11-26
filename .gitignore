@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.pyo
+
+# local audit harnesses (not part of the published profile)
+check.html
+measure.html
+audit-*.html
