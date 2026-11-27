@@ -7,3 +7,6 @@ check.html
 measure.html
 measure-live.html
 *audit*.html
+
+# audit output written into the working tree by mistake
+/*.png

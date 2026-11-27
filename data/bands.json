@@ -1,0 +1,74 @@
+[
+  {
+    "lower": 320,
+    "upper": 399,
+    "width": 317,
+    "narrow": 238,
+    "scale": 0.7508,
+    "gallery": 424
+  },
+  {
+    "lower": 400,
+    "upper": 506,
+    "width": 424,
+    "narrow": 318,
+    "scale": 0.75,
+    "gallery": 424
+  },
+  {
+    "lower": 507,
+    "upper": 648,
+    "width": 566,
+    "narrow": 425,
+    "scale": 0.7509,
+    "gallery": 566
+  },
+  {
+    "lower": 649,
+    "upper": 767,
+    "width": 685,
+    "narrow": 567,
+    "scale": 0.8277,
+    "gallery": 846
+  },
+  {
+    "lower": 768,
+    "upper": 900,
+    "width": 530,
+    "narrow": 398,
+    "scale": 0.7509,
+    "gallery": 566
+  },
+  {
+    "lower": 901,
+    "upper": 1011,
+    "width": 641,
+    "narrow": 531,
+    "scale": 0.8284,
+    "gallery": 846
+  },
+  {
+    "lower": 1012,
+    "upper": 1204,
+    "width": 770,
+    "narrow": 578,
+    "scale": 0.7506,
+    "gallery": 846
+  },
+  {
+    "lower": 1205,
+    "upper": 1279,
+    "width": 845,
+    "narrow": 771,
+    "scale": 0.9124,
+    "gallery": 846
+  },
+  {
+    "lower": 1280,
+    "upper": 1920,
+    "width": 846,
+    "narrow": 846,
+    "scale": 1.0,
+    "gallery": 846
+  }
+]

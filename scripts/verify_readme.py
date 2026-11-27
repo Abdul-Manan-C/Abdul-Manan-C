@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Mechanical acceptance check for the profile README.
 
-Renders the README exactly as GitHub renders it, measures it at a desktop
-and a phone viewport, and asserts the rulebook rules that can be measured
-rather than argued about:
+Renders the README exactly as GitHub renders it, measures it across the whole
+responsive range, and asserts the rulebook rules that can be measured rather
+than argued about:
 
   * every image loads
   * the page never scrolls horizontally
   * nothing overflows the README column (the data table scrolls inside its
     own box, which is expected)
-  * no SVG is scaled below 0.8x, because that is where its type dies
+  * every SVG is drawn for the band it is used in, and never shrinks far
+    enough to kill the type inside it
   * desktop prose stays inside the 40-78 character band
   * every authored SVG parses, uses only on-scale type, at most three
     weights, one card radius, and passes the contrast floors
@@ -45,9 +46,48 @@ ALLOWED_WEIGHTS = {"400", "600", "700"}
 ALLOWED_RADII = {"2", "6", "12"}
 BG = "#0d1117"
 
-# The README column is 846px on a desktop profile page. GitHub centres it.
-COLUMN = 846
+# The smallest type any band is allowed to draw with, and the smallest a
+# rendered character may become before it stops being readable.
+BAND_MIN_TYPE = 16
+READABLE_FLOOR = 12
+
+# The viewport widths the README is checked at: one inside every band.
+WIDTHS = (320, 390, 500, 768, 900, 1024, 1200, 1440)
+
 COLUMN_CSS = github_css.PREVIEW_CSS
+
+
+def bands() -> list[dict]:
+    path = ROOT / "data" / "bands.json"
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def band_for(viewport: int) -> dict:
+    for band in bands():
+        if viewport <= band["upper"]:
+            return band
+    return bands()[-1]
+
+
+_FONT_FLOORS: dict[str, float] = {}
+
+
+def min_font_size(name: str) -> float:
+    """The smallest type an SVG draws with.
+
+    This is what decides whether a visual is still readable once the
+    browser has scaled it to fit the column.
+    """
+    if name in _FONT_FLOORS:
+        return _FONT_FLOORS[name]
+    floor = 0.0
+    for path in (ROOT / "assets").rglob(name):
+        source = path.read_text(encoding="utf-8")
+        sizes = {float(x) for x in re.findall(r'font-size="([0-9.]+)"', source)}
+        floor = min(sizes) if sizes else 0.0
+        break
+    _FONT_FLOORS[name] = floor
+    return floor
 
 
 class QuietHandler(http.server.SimpleHTTPRequestHandler):
@@ -115,6 +155,7 @@ def audit_art(report: Report) -> None:
     weights: set[str] = set()
     radii: set[str] = set()
     contrast_fail: list[str] = []
+    smallest: list[str] = []
 
     for path in files:
         source = path.read_text(encoding="utf-8")
@@ -123,11 +164,23 @@ def audit_art(report: Report) -> None:
         except Exception:
             invalid.append(path.name)
 
-        for size in set(re.findall(r'font-size="([0-9.]+)"', source)):
-            if float(size) not in TYPE_SCALE:
+        sizes = {float(x) for x in re.findall(r'font-size="([0-9.]+)"', source)}
+        for size in sizes:
+            if size not in TYPE_SCALE:
                 off_scale.append(f"{path.name}:{size}")
         weights |= set(re.findall(r'font-weight="([0-9]+)"', source))
         radii |= set(re.findall(r'\brx="([0-9.]+)"', source))
+
+        # The band artwork is drawn at a band's widest column and may shrink
+        # by the band's scale before it reaches a phone. The smallest type it
+        # draws with still has to be readable after that shrink.
+        if re.match(r"^(hero|stack|activity|work)-\d+\.svg$", path.name):
+            floor = min(sizes) if sizes else 0
+            band = next((b for b in bands() if path.name.endswith(f"-{b['width']}.svg")), None)
+            if band:
+                rendered = floor * band["scale"]
+                if rendered < READABLE_FLOOR - 0.01:
+                    smallest.append(f"{path.name}: {floor}px x{band['scale']} = {rendered:.1f}px")
 
         for match in re.finditer(r'<text\b[^>]*\bfill="(#[0-9A-Fa-f]{6})"[^>]*>([^<]*)</text>', source):
             tag = source[match.start():source.find(">", match.start())]
@@ -147,6 +200,7 @@ def audit_art(report: Report) -> None:
     report.check("at most three weights", len(weights) <= 3, str(sorted(weights)))
     report.check("one card radius family", radii <= ALLOWED_RADII, str(sorted(radii)))
     report.check("contrast floors met", not contrast_fail, str(contrast_fail[:6]))
+    report.check("band type stays readable at its narrowest", not smallest, str(smallest[:4]))
 
 
 def audit_layout(report: Report, tag: str, width: int) -> None:
@@ -157,22 +211,67 @@ def audit_layout(report: Report, tag: str, width: int) -> None:
         return
     data = json.loads(path.read_text(encoding="utf-8"))
     images = {item["src"]: item for item in data["images"]}
+    band = band_for(width)
 
     report.check("page does not scroll sideways", not data["pageScrollsHorizontally"])
     report.check("every image loads", data["broken"] == 0, f"{data['broken']} broken")
 
-    mobile = width < 500
-    for name in ("hero", "stack", "activity"):
-        chosen = f"{name}.mobile.svg" if mobile else f"{name}.svg"
-        other = f"{name}.svg" if mobile else f"{name}.mobile.svg"
-        report.check(f"{name} picks the {'phone' if mobile else 'desktop'} artwork",
-                     chosen in images and other not in images)
-    report.check("repo cards pick the phone artwork",
-                 ("repo-autocore.mobile.svg" in images) == mobile)
+    # The column has to be the width GitHub really gives it, or the whole
+    # measurement is about a page that does not exist.
+    expected_column = band["narrow"] if width == band["lower"] else None
+    if expected_column is not None:
+        report.check("the column matches GitHub's measured width",
+                     data["readmeWidth"] == expected_column,
+                     f"{data['readmeWidth']} vs {expected_column}")
 
-    shrunk = [f"{i['src']}@{i['scale']}" for i in data["images"]
-              if i["src"].endswith(".svg") and 0 < i["scale"] < 0.8]
-    report.check("no SVG scaled below 0.8x", not shrunk, str(shrunk[:4]))
+    # Every full-width visual has to come from the band that belongs to this
+    # viewport, and has to be drawn at that band's own width.
+    for name in ("hero", "stack", "activity", "work"):
+        chosen = f"{name}-{band['width']}.svg"
+        report.check(f"{name} uses the {band['width']}px band artwork", chosen in images,
+                     f"got {[i for i in images if i.startswith(name + '-')][:1]}")
+        if chosen in images:
+            scale = images[chosen]["scale"]
+            report.check(f"{name} fills its band", scale >= band["scale"] - 0.01,
+                         f"scale {scale} vs floor {band['scale']}")
+            report.check(f"{name} type stays readable", scale * BAND_MIN_TYPE >= READABLE_FLOOR - 0.01,
+                         f"{scale * BAND_MIN_TYPE:.1f}px")
+
+    # The gallery is drawn in three compositions rather than one per band.
+    gallery = f"gallery-{band['gallery']}.svg"
+    report.check(f"gallery uses the {band['gallery']}px composition", gallery in images,
+                 f"got {[i for i in images if i.startswith('gallery-')][:1]}")
+
+    # The rule that actually matters: whatever a visual is scaled to, the
+    # smallest type inside it has to stay readable. A blanket scale floor
+    # would forbid the gallery, which draws with larger type so it can
+    # survive a harder shrink.
+    unreadable = []
+    for item in data["images"]:
+        if not item["src"].endswith(".svg"):
+            continue
+        floor = min_font_size(item["src"])
+        if floor and floor * item["scale"] < READABLE_FLOOR - 0.01:
+            unreadable.append(f"{item['src']} {floor}px x{item['scale']} = {floor * item['scale']:.1f}px")
+    report.check("no SVG renders type below 12px", not unreadable, str(unreadable[:4]))
+
+    # An image with a fixed height and a clamped width gets letterboxed:
+    # the artwork sits in a box taller than it, with dead space above and
+    # below. The box has to keep the artwork's own proportions.
+    letterboxed = []
+    for item in data["images"]:
+        if not item["src"].endswith(".svg"):
+            continue
+        try:
+            box_w, box_h = (int(x) for x in item["rendered"].split("x"))
+            nat_w, nat_h = (int(x) for x in item["natural"].split("x"))
+        except ValueError:
+            continue
+        if not box_w or not box_h or not nat_w or not nat_h:
+            continue
+        if abs(box_w / box_h - nat_w / nat_h) / (nat_w / nat_h) > 0.02:
+            letterboxed.append(f"{item['src']} box {box_w}x{box_h} art {nat_w}x{nat_h}")
+    report.check("no artwork is letterboxed", not letterboxed, str(letterboxed[:4]))
 
     over = [o for o in data["overflow"] if o["tag"] not in ("thead", "tbody", "tr", "th", "td")]
     report.check("nothing overflows the column", not over, str(over[:3]))
@@ -193,13 +292,9 @@ def audit_layout(report: Report, tag: str, width: int) -> None:
     report.check("section titles carry no full-width rule", not ruled, str(ruled[:4]))
     report.check("the page has section titles", bool(headings), f"{len(headings)} found")
 
-    if not mobile:
+    if width >= 900:
         out = [f"{p['charsPerLine']}ch" for p in data["prose"] if not p["inBand"]]
         report.check("prose stays in the 40-78ch band", not out, str(out[:5]))
-        for name in ("hero.svg", "stack.svg", "activity.svg", "repo-autocore.svg"):
-            if name in images:
-                report.check(f"{name} renders 1:1", images[name]["scale"] == 1.0,
-                             str(images[name]["rendered"]))
 
 
 def audit_markdown(report: Report) -> None:
@@ -245,9 +340,9 @@ def main() -> int:
         )
         httpd = serve(preview)
         try:
-            for width, emulate in ((900, False), (390, True)):
+            for width in WIDTHS:
                 env = dict(os.environ, CDP_WINDOW=f"{width},900")
-                if emulate:
+                if width < 500:
                     env.update(CDP_EMULATE_WIDTH=str(width), CDP_EMULATE_HEIGHT="844",
                                CDP_EMULATE_SCALE="2")
                 outdir = OUT / args.tag
@@ -268,8 +363,8 @@ def main() -> int:
 
     audit_art(report)
     audit_markdown(report)
-    audit_layout(report, args.tag, 900)
-    audit_layout(report, args.tag, 390)
+    for width in WIDTHS:
+        audit_layout(report, args.tag, width)
 
     print()
     if report.failures:

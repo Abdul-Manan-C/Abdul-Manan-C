@@ -71,11 +71,37 @@ def css() -> str:
     return fetch().read_text(encoding="utf-8", errors="replace")
 
 
-# The README column GitHub actually renders is 846px wide. The preview has to
-# reproduce that, or every measurement is wrong by the difference.
+# GitHub's README column is not a fixed width - it is a piecewise-linear
+# function of the viewport, measured live by scripts/measure_column_curve.py:
+#
+#     viewport <  768   column = viewport - 82
+#     768..1011         column = viewport - 370
+#     1012..1279        column = viewport - 434
+#     viewport >= 1280  column = 846
+#
+# The preview has to reproduce it, or every measurement is wrong by the
+# difference - and the difference is exactly what decides whether artwork is
+# squeezed or stretched.
 PREVIEW_CSS = """
-.preview-column { width: 896px; margin: 0 auto; }
-@media (max-width: 895px) { .preview-column { width: 100%; } }
+.preview-column { width: 100%; }
+article.markdown-body.entry-content {
+  box-sizing: border-box;
+  padding-left: 0;
+  padding-right: 0;
+  width: calc(100vw - 82px);
+  max-width: 846px;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (min-width: 768px) {
+  article.markdown-body.entry-content { width: calc(100vw - 370px); }
+}
+@media (min-width: 1012px) {
+  article.markdown-body.entry-content { width: calc(100vw - 434px); }
+}
+@media (min-width: 1280px) {
+  article.markdown-body.entry-content { width: 846px; }
+}
 """
 
 

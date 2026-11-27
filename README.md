@@ -1,9 +1,18 @@
 <div align="center">
 
+<!-- AUTO:HERO:START -->
 <picture>
-  <source media="(max-width: 767px)" srcset="./assets/hero.mobile.svg">
-  <img src="./assets/hero.svg" alt="Abdul Manan — CYNEX Studio console profile" width="846" />
+  <source media="(max-width: 399px)" srcset="./assets/hero-317.svg" width="317">
+  <source media="(max-width: 506px)" srcset="./assets/hero-424.svg" width="424">
+  <source media="(max-width: 648px)" srcset="./assets/hero-566.svg" width="566">
+  <source media="(max-width: 767px)" srcset="./assets/hero-685.svg" width="685">
+  <source media="(max-width: 900px)" srcset="./assets/hero-530.svg" width="530">
+  <source media="(max-width: 1011px)" srcset="./assets/hero-641.svg" width="641">
+  <source media="(max-width: 1204px)" srcset="./assets/hero-770.svg" width="770">
+  <source media="(max-width: 1279px)" srcset="./assets/hero-845.svg" width="845">
+  <img src="./assets/hero-846.svg" alt="Abdul Manan — founder of CYNEX Studio, BScS at UAJK, building with Next.js, React and TypeScript" width="846" />
 </picture>
+<!-- AUTO:HERO:END -->
 
 <br /><br />
 
@@ -34,120 +43,62 @@ Building [AUTOCORE](https://github.com/Abdul-Manan-C/autocore) v4 and the<br />
 Full builds for founders, stores and agencies.<br />
 Direction, design, code, deployment, DNS, email, aftercare.
 
-<table>
-  <tr>
-    <td width="50%" valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/screens/m/laxitech.jpg">
-        <img src="./assets/screens/laxitech.jpg" alt="Laxitech website" width="396" />
-      </picture><br />
-      <b><a href="https://laxitech.com/">Laxitech</a></b> <code>laxitech.com</code><br />
-      3D MacBook stage with WebGL aurora lighting.
-    </td>
-    <td width="50%" valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/screens/m/vixion.jpg">
-        <img src="./assets/screens/vixion.jpg" alt="Vixion Studio website" width="396" />
-      </picture><br />
-      <b><a href="https://www.vixion.studio/">Vixion Studio</a></b> <code>vixion.studio</code><br />
-      Dark-to-light scroll; AI concierge to WhatsApp.
-    </td>
-  </tr>
-  <tr>
-    <td valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/screens/m/movix.jpg">
-        <img src="./assets/screens/movix.jpg" alt="Movix Studio website" width="396" />
-      </picture><br />
-      <b><a href="https://www.movixstudio.com/">Movix Studio</a></b> <code>movixstudio.com</code><br />
-      Instant HD showreel; indexed on Google in 20 min.
-    </td>
-    <td valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/screens/m/commerce-lions.jpg">
-        <img src="./assets/screens/commerce-lions.jpg" alt="Commerce Lions website" width="396" />
-      </picture><br />
-      <b><a href="https://www.commercelions.com/">Commerce Lions</a></b> <code>commercelions.com</code><br />
-      Education portal with protected member accounts.
-    </td>
-  </tr>
-  <tr>
-    <td valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/screens/m/super-luxuries.jpg">
-        <img src="./assets/screens/super-luxuries.jpg" alt="Super Luxuries website" width="396" />
-      </picture><br />
-      <b><a href="https://www.superluxuries.store/">Super Luxuries</a></b> <code>superluxuries.store</code><br />
-      Dubai + London boutique; WhatsApp checkout.
-    </td>
-    <td valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/screens/m/mac-vision.jpg">
-        <img src="./assets/screens/mac-vision.jpg" alt="Mac Vision website" width="396" />
-      </picture><br />
-      <b><a href="https://www.macvision.store/">Mac Vision</a></b> <code>macvision.store</code><br />
-      Apple reseller; founder-locked owner dashboard.
-    </td>
-  </tr>
-</table>
+<!-- AUTO:GALLERY:START -->
+<picture>
+  <source media="(max-width: 506px)" srcset="./assets/gallery-424.svg" width="424">
+  <source media="(max-width: 648px)" srcset="./assets/gallery-566.svg" width="566">
+  <source media="(max-width: 767px)" srcset="./assets/gallery-846.svg" width="846">
+  <source media="(max-width: 900px)" srcset="./assets/gallery-566.svg" width="566">
+  <source media="(max-width: 1279px)" srcset="./assets/gallery-846.svg" width="846">
+  <img src="./assets/gallery-846.svg" alt="Six client platforms in production — Laxitech, Vixion Studio, Movix Studio, Commerce Lions, Super Luxuries and Mac Vision" width="846" />
+</picture>
+
+**[Laxitech](https://laxitech.com/)** — 3D MacBook stage with WebGL aurora lighting.
+**[Vixion Studio](https://www.vixion.studio/)** — Dark-to-light scroll; AI concierge to WhatsApp.
+**[Movix Studio](https://www.movixstudio.com/)** — Instant HD showreel; indexed on Google in 20 min.
+**[Commerce Lions](https://www.commercelions.com/)** — Education portal with protected member accounts.
+**[Super Luxuries](https://www.superluxuries.store/)** — Dubai + London boutique; WhatsApp checkout.
+**[Mac Vision](https://www.macvision.store/)** — Apple reseller; founder-locked owner dashboard.
+<!-- AUTO:GALLERY:END -->
 
 Case studies, pricing and process: [cynex.online/works](https://www.cynex.online/works)
 
 ### Toolbelt
 
+<!-- AUTO:STACK:START -->
 <picture>
-  <source media="(max-width: 767px)" srcset="./assets/stack.mobile.svg">
-  <img src="./assets/stack.svg" alt="Technology stack — Next.js, React, TypeScript, Tailwind CSS, Vite, Three.js, GSAP, Framer, WebGL, Node.js, Python, PostgreSQL, Prisma, Postman, Kali Linux, GNU Bash, Burp Suite, Wireshark and Docker" width="846" />
+  <source media="(max-width: 399px)" srcset="./assets/stack-317.svg" width="317">
+  <source media="(max-width: 506px)" srcset="./assets/stack-424.svg" width="424">
+  <source media="(max-width: 648px)" srcset="./assets/stack-566.svg" width="566">
+  <source media="(max-width: 767px)" srcset="./assets/stack-685.svg" width="685">
+  <source media="(max-width: 900px)" srcset="./assets/stack-530.svg" width="530">
+  <source media="(max-width: 1011px)" srcset="./assets/stack-641.svg" width="641">
+  <source media="(max-width: 1204px)" srcset="./assets/stack-770.svg" width="770">
+  <source media="(max-width: 1279px)" srcset="./assets/stack-845.svg" width="845">
+  <img src="./assets/stack-846.svg" alt="Technology stack — Next.js, React, TypeScript, Tailwind CSS, Vite, Three.js, GSAP, Framer, WebGL, Node.js, Python, PostgreSQL, Prisma, Postman, Kali Linux, GNU Bash, Burp Suite, Wireshark and Docker" width="846" />
 </picture>
+<!-- AUTO:STACK:END -->
 
 <sub>Official brand marks, grouped by purpose.</sub>
 
 ### Selected work
 
-<table>
-  <tr>
-    <td width="50%" valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/cards/repo-autocore.mobile.svg">
-        <img src="./assets/cards/repo-autocore.svg" alt="AUTOCORE — an automated pentest recon and enumeration orchestrator in Bash and Python" width="396" />
-      </picture>
-    </td>
-    <td width="50%" valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/cards/repo-cynex-portfolio.mobile.svg">
-        <img src="./assets/cards/repo-cynex-portfolio.svg" alt="CYNEX Portfolio — a cyber-themed portfolio with a live system HUD" width="396" />
-      </picture>
-    </td>
-  </tr>
-  <tr>
-    <td valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/cards/repo-nullshield.mobile.svg">
-        <img src="./assets/cards/repo-nullshield.svg" alt="NullShield Security — pentest, SOC monitoring and defensive hardening services site" width="396" />
-      </picture>
-    </td>
-    <td valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/cards/repo-ironcore.mobile.svg">
-        <img src="./assets/cards/repo-ironcore.svg" alt="IronCore Gym — fitness site with a dashboard, pricing, programmes and trainers" width="396" />
-      </picture>
-    </td>
-  </tr>
-  <tr>
-    <td valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/cards/repo-bus-reservation-system.mobile.svg">
-        <img src="./assets/cards/repo-bus-reservation-system.svg" alt="Bus Reservation System — a C++ console app for buses, seat reservations and reports" width="396" />
-      </picture>
-    </td>
-    <td valign="top" align="left">
-      <picture>
-        <source media="(max-width: 767px)" srcset="./assets/cards/repo-flamehouse.mobile.svg">
-        <img src="./assets/cards/repo-flamehouse.svg" alt="FlameHouse — a restaurant site template with a one-file token theme system" width="396" />
-      </picture>
-    </td>
-  </tr>
-</table>
+<!-- AUTO:WORK:START -->
+<picture>
+  <source media="(max-width: 399px)" srcset="./assets/work-317.svg" width="317">
+  <source media="(max-width: 506px)" srcset="./assets/work-424.svg" width="424">
+  <source media="(max-width: 648px)" srcset="./assets/work-566.svg" width="566">
+  <source media="(max-width: 767px)" srcset="./assets/work-685.svg" width="685">
+  <source media="(max-width: 900px)" srcset="./assets/work-530.svg" width="530">
+  <source media="(max-width: 1011px)" srcset="./assets/work-641.svg" width="641">
+  <source media="(max-width: 1204px)" srcset="./assets/work-770.svg" width="770">
+  <source media="(max-width: 1279px)" srcset="./assets/work-845.svg" width="845">
+  <img src="./assets/work-846.svg" alt="Selected work — autocore, CYNEX Portfolio, nullshield, ironcore, Bus Reservation System and flamehouse" width="846" />
+</picture>
+<!-- AUTO:WORK:END -->
+
+[autocore](https://github.com/Abdul-Manan-C/autocore) · [CYNEX-Portfolio](https://github.com/Abdul-Manan-C/CYNEX-Portfolio) · [nullshield](https://github.com/Abdul-Manan-C/nullshield)
+[ironcore](https://github.com/Abdul-Manan-C/ironcore) · [Bus-Reservation-System](https://github.com/Abdul-Manan-C/Bus-Reservation-System) · [flamehouse](https://github.com/Abdul-Manan-C/flamehouse)
 
 ### Security practice
 
@@ -189,10 +140,19 @@ Straight from the GitHub API, refreshed every morning and sorted by stars.
 
 ### Activity
 
+<!-- AUTO:ACTIVITY:START -->
 <picture>
-  <source media="(max-width: 767px)" srcset="./assets/activity.mobile.svg">
-  <img src="./assets/activity.svg" alt="Contribution activity — 327 contributions over the last 12 months" width="846" />
+  <source media="(max-width: 399px)" srcset="./assets/activity-317.svg" width="317">
+  <source media="(max-width: 506px)" srcset="./assets/activity-424.svg" width="424">
+  <source media="(max-width: 648px)" srcset="./assets/activity-566.svg" width="566">
+  <source media="(max-width: 767px)" srcset="./assets/activity-685.svg" width="685">
+  <source media="(max-width: 900px)" srcset="./assets/activity-530.svg" width="530">
+  <source media="(max-width: 1011px)" srcset="./assets/activity-641.svg" width="641">
+  <source media="(max-width: 1204px)" srcset="./assets/activity-770.svg" width="770">
+  <source media="(max-width: 1279px)" srcset="./assets/activity-845.svg" width="845">
+  <img src="./assets/activity-846.svg" alt="Contribution activity — 327 contributions over the last 12 months" width="846" />
 </picture>
+<!-- AUTO:ACTIVITY:END -->
 
 ### How this README is built
 

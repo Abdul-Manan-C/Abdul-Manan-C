@@ -80,6 +80,18 @@ IDENTITY = [
     ("live", "cynex.online"),
 ]
 
+# The hero terminal has to fit two columns on some bands and one on others,
+# so the values it prints are short enough for either. The full story is in
+# the markdown under the hero and in the artwork's alt text.
+IDENTITY_SHORT = [
+    ("name", "Abdul Manan"),
+    ("role", "CYNEX Studio"),
+    ("study", "BSCS - UAJK"),
+    ("base", "Muzaffarabad, AK"),
+    ("builds", "Next.js - React - TS"),
+    ("live", "cynex.online"),
+]
+
 TILES = [
     {
         "id": "build",
@@ -87,7 +99,7 @@ TILES = [
         "metric": "platforms",
         "value": 6,
         "headline": "platforms in production",
-        "sub": "Next.js \u00b7 TypeScript \u00b7 Tailwind",
+        "sub": "Next.js \u00b7 TypeScript",
         "accent": BLUE,
         "url": "https://www.cynex.online/works",
     },
@@ -97,7 +109,7 @@ TILES = [
         "metric": "streak",
         "value": 217,
         "headline": "day contribution streak",
-        "sub": "AUTOCORE \u00b7 TryHackMe \u00b7 Kali",
+        "sub": "AUTOCORE \u00b7 Kali",
         "accent": GREEN,
         "url": "https://tryhackme.com/p/mananhanif01",
     },
@@ -107,7 +119,7 @@ TILES = [
         "metric": "disciplines",
         "value": 10,
         "headline": "engineering disciplines",
-        "sub": "3D \u00b7 dashboards \u00b7 AI \u00b7 SEO",
+        "sub": "3D \u00b7 AI \u00b7 SEO",
         "accent": AMBER,
         "url": "https://www.cynex.online",
     },
@@ -449,18 +461,21 @@ def panel(w: int, h: int, rx: int = R_CARD) -> str:
     )
 
 
-def base_style() -> str:
+def base_style(radar_origin: str = "150px 148px") -> str:
     """Motion rules shared by every card.
 
     Persistent motion is opt-in through prefers-reduced-motion: no-preference,
     and the static state is always the default so nothing can be left hidden.
     Opacity entrances are SMIL (fail-safe: the base value stays visible even if
     the animation timeline never advances); CSS only ever moves things.
+
+    ``radar_origin`` is where the sweeping dial turns around. It is passed in
+    because the dial moves with the band width.
     """
     return (
         "<style>"
         ".cu-static{display:none}"
-        ".spin,.print{transform-box:view-box;transform-origin:150px 148px}"
+        f".spin,.print{{transform-box:view-box;transform-origin:{radar_origin}}}"
         ".ping{transform-box:fill-box;transform-origin:center}"
         ".grow{transform-box:fill-box;transform-origin:bottom}"
         "@media (prefers-reduced-motion: reduce){"
@@ -530,54 +545,68 @@ def truncate(text: str, limit: int) -> str:
 
 
 # --------------------------------------------------------------------------- #
-# hero
+# radar - the sweeping dial beside the terminal on wide bands
 # --------------------------------------------------------------------------- #
 
-W, H = 846, 320
-CX, CY = 150, 148
 RAD = 116
 
 
-def radar() -> str:
+def radar(cx: float, cy: float, rad: float = RAD) -> str:
+    """A radar sweep.
+
+    The dial is drawn around whatever centre it is given, so the same drawing
+    works in a wide hero and in a narrower one.
+    """
+    inner = rad * 0.72
     parts = [
-        f'<circle cx="{CX}" cy="{CY}" r="{RAD}" fill="none" stroke="#21262d" stroke-width="1"/>',
-        f'<circle cx="{CX}" cy="{CY}" r="84" fill="none" stroke="#1b2028" stroke-width="1"/>',
-        f'<circle cx="{CX}" cy="{CY}" r="52" fill="none" stroke="#1b2028" stroke-width="1"/>',
-        f'<line x1="{CX}" y1="{CY - RAD}" x2="{CX}" y2="{CY + RAD}" stroke="#1b2028" stroke-width="1" stroke-dasharray="3 7"/>',
-        f'<line x1="{CX - RAD}" y1="{CY}" x2="{CX + RAD}" y2="{CY}" stroke="#1b2028" stroke-width="1" stroke-dasharray="3 7"/>',
+        f'<circle cx="{cx}" cy="{cy}" r="{rad}" fill="none" stroke="#21262d" stroke-width="1"/>',
+        f'<circle cx="{cx}" cy="{cy}" r="{inner:.1f}" fill="none" stroke="#1b2028" stroke-width="1"/>',
+        f'<circle cx="{cx}" cy="{cy}" r="{rad * 0.45:.1f}" fill="none" stroke="#1b2028" stroke-width="1"/>',
+        f'<line x1="{cx}" y1="{cy - rad}" x2="{cx}" y2="{cy + rad}" stroke="#1b2028" stroke-width="1" stroke-dasharray="3 7"/>',
+        f'<line x1="{cx - rad}" y1="{cy}" x2="{cx + rad}" y2="{cy}" stroke="#1b2028" stroke-width="1" stroke-dasharray="3 7"/>',
     ]
 
     span = math.radians(54)
-    ex = CX + RAD * math.sin(span)
-    ey = CY - RAD * math.cos(span)
+    ex = cx + rad * math.sin(span)
+    ey = cy - rad * math.cos(span)
     parts.append(
-        f'<g class="spin"><path d="M {CX} {CY} L {CX} {CY - RAD} A {RAD} {RAD} 0 0 1 {ex:.1f} {ey:.1f} Z" '
+        f'<g class="spin"><path d="M {cx} {cy} L {cx} {cy - rad} A {rad} {rad} 0 0 1 {ex:.1f} {ey:.1f} Z" '
         f'fill="url(#sweep)" opacity="0.9"/></g>'
     )
     parts.append(
-        f'<circle class="spin ring" cx="{CX}" cy="{CY}" r="36" fill="none" stroke="#30363d" stroke-width="1" '
-        f'stroke-dasharray="2 6"/>'
+        f'<circle class="spin ring" cx="{cx}" cy="{cy}" r="{rad * 0.31:.1f}" fill="none" '
+        f'stroke="#30363d" stroke-width="1" stroke-dasharray="2 6"/>'
     )
 
-    blips = [(116, 108, "#3fb949"), (198, 96, "#d29922"), (188, 198, "#58a6ff"), (104, 182, "#3fb949")]
-    for bx, by, colour in blips:
-        parts.append(f'<circle class="pulse" cx="{bx}" cy="{by}" r="3.5" fill="{colour}"/>')
+    # Four returns on the dial, placed on the ring rather than at fixed
+    # pixels so the layout follows the radius.
+    for angle, radius, colour in (
+        (-38, 0.92, "#3fb949"), (18, 0.80, "#d29922"),
+        (142, 0.86, "#58a6ff"), (-104, 0.74, "#3fb949"),
+    ):
+        theta = math.radians(angle)
+        bx = cx + rad * radius * math.sin(theta)
+        by = cy - rad * radius * math.cos(theta)
+        parts.append(f'<circle class="pulse" cx="{bx:.1f}" cy="{by:.1f}" r="3.5" fill="{colour}"/>')
         parts.append(
-            f'<circle class="ping" cx="{bx}" cy="{by}" r="3.5" fill="none" stroke="{colour}" stroke-width="1" opacity="0"/>'
+            f'<circle class="ping" cx="{bx:.1f}" cy="{by:.1f}" r="3.5" fill="none" stroke="{colour}" '
+            f'stroke-width="1" opacity="0"/>'
         )
 
     hex_pts = []
     for i in range(6):
         angle = math.radians(90 + i * 60)
-        hex_pts.append(f"{CX + 26 * math.cos(angle):.1f},{CY + 26 * math.sin(angle):.1f}")
-    parts.append(f'<polygon points="{" ".join(hex_pts)}" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>')
+        hex_pts.append(f"{cx + rad * 0.22 * math.cos(angle):.1f},{cy + rad * 0.22 * math.sin(angle):.1f}")
     parts.append(
-        f'<text x="{CX}" y="{CY + 8}" text-anchor="middle" font-family="{MONO}" font-size="20" '
+        f'<polygon points="{" ".join(hex_pts)}" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>'
+    )
+    parts.append(
+        f'<text x="{cx}" y="{cy + 8}" text-anchor="middle" font-family="{MONO}" font-size="20" '
         f'font-weight="700" fill="#58a6ff">C</text>'
     )
     parts.append(
-        f'<text x="{CX}" y="292" text-anchor="middle" font-family="{MONO}" font-size="12" '
-        f'letter-spacing="1.5" fill="#8b949e">CYNEX STUDIO</text>'
+        f'<text x="{cx}" y="{cy + rad + 30}" text-anchor="middle" font-family="{MONO}" '
+        f'font-size="{BAND_MIN_TYPE}" letter-spacing="1.0" fill="#8b949e">CYNEX STUDIO</text>'
     )
     return "".join(parts)
 
@@ -587,90 +616,6 @@ def print_in(delay: float) -> str:
     animation only overrides it once it starts (a CSS keyframe would leave the
     text hidden if the animation timeline never advances)."""
     return f'<animate attributeName="opacity" from="0" to="1" begin="{delay:.2f}s" dur="0.45s" fill="freeze"/>'
-
-
-def console(snapshot: dict) -> str:
-    parts = []
-    parts.append(
-        f'<text class="print" x="320" y="44" font-family="{MONO}" font-size="14" fill="#3fb949" '
-        f'style="animation-delay:.10s">'
-        f'<tspan fill="#3fb949">cynex@kali</tspan><tspan fill="#8b949e">:~$ </tspan>'
-        f'<tspan fill="#c9d1d9">whoami</tspan>{print_in(0.10)}</text>'
-    )
-    for i, (label, value) in enumerate(IDENTITY):
-        delay = 0.34 + i * 0.11
-        parts.append(
-            f'<text class="print" x="320" y="{84 + i * 30}" font-family="{MONO}" font-size="14" '
-            f'style="animation-delay:{delay:.2f}s">'
-            f'<tspan fill="#58a6ff">{html.escape(label.ljust(9))}</tspan>'
-            f'<tspan fill="#c9d1d9">{html.escape(value)}</tspan>{print_in(delay)}</text>'
-        )
-
-    cursor_x = 320 + 9 * 9 + len("cynex.online") * 9 + 10
-    parts.append(f'<rect class="cursor" x="{cursor_x}" y="248" width="8" height="16" fill="#3fb949"/>')
-
-    stats = (
-        f"{snapshot['contributions']} contributions \u00b7 {snapshot['public_repos']} repos \u00b7 "
-        f"{snapshot['followers']} followers \u00b7 {snapshot['total_stars']} stars"
-    )
-    parts.append(f'<circle class="live" cx="326" cy="296" r="3.5" fill="#3fb949"/>')
-    parts.append(
-        f'<text class="print" x="340" y="300" font-family="{MONO}" font-size="12" fill="#8b949e" '
-        f'style="animation-delay:1.25s">{html.escape(stats)}{print_in(1.25)}</text>'
-    )
-    parts.append(
-        f'<text class="print" x="{W - 36}" y="44" text-anchor="end" font-family="{MONO}" font-size="12" '
-        f'fill="{INK_3}" style="animation-delay:1.35s">refreshed daily{print_in(1.35)}</text>'
-    )
-    return "".join(parts)
-
-
-def render_hero(snapshot: dict) -> str:
-    defs = (
-        "<defs>"
-        '<radialGradient id="sweep" cx="0.5" cy="0.5" r="0.5">'
-        '<stop offset="0%" stop-color="#58a6ff" stop-opacity="0.45"/>'
-        '<stop offset="70%" stop-color="#58a6ff" stop-opacity="0.12"/>'
-        '<stop offset="100%" stop-color="#58a6ff" stop-opacity="0"/>'
-        "</radialGradient>"
-        '<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">'
-        '<rect width="4" height="1" fill="#ffffff" opacity="0.022"/>'
-        "</pattern>"
-        "</defs>"
-    )
-    style = (
-        "<style>"
-        ".spin,.print{transform-box:view-box;transform-origin:150px 148px}"
-        ".ping{transform-box:fill-box;transform-origin:center}"
-        "@media (prefers-reduced-motion: no-preference){"
-        ".spin{animation:sweep 9s linear infinite}"
-        ".spin.ring{animation-duration:26s}"
-        ".ping{animation:ping 2.6s ease-out infinite}"
-        ".pulse,.live{animation:pulse 2.6s ease-in-out infinite}"
-        ".live{animation-duration:2s}"
-        ".cursor{animation:blink 1.1s steps(1,end) infinite}"
-        ".print{animation:rise .5s ease-out both}"
-        "}"
-        "@keyframes sweep{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}"
-        "@keyframes ping{0%{transform:scale(1);opacity:.75}70%,100%{transform:scale(4.5);opacity:0}}"
-        "@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}"
-        "@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}"
-        "@keyframes rise{from{transform:translateY(6px)}to{transform:translateY(0)}}"
-        "</style>"
-    )
-    svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
-        f'role="img" aria-label="Abdul Manan — CYNEX Studio console profile">'
-        f"{defs}{style}"
-        f'<rect width="{W}" height="{H}" rx="12" fill="#0d1117"/>'
-        f'<rect width="{W}" height="{H}" rx="12" fill="url(#scan)"/>'
-        f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="12" fill="none" stroke="#30363d"/>'
-        f"{radar()}"
-        f'<line x1="292" y1="34" x2="292" y2="286" stroke="#21262d" stroke-width="1"/>'
-        f"{console(snapshot)}"
-        f"</svg>\n"
-    )
-    return embed_fonts(svg)
 
 
 # --------------------------------------------------------------------------- #
@@ -733,14 +678,15 @@ def render_tile(tile: dict, index: int) -> str:
         f'<stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>'
         f"</linearGradient></defs>"
         f'{shine}'
-        f'<text x="18" y="36" font-family="{MONO}" font-size="12" letter-spacing="1.5" fill="{accent}">'
+        f'<text x="18" y="36" font-family="{MONO}" font-size="{BAND_MIN_TYPE}" letter-spacing="1.0" fill="{accent}">'
         f'{tile["label"]}</text>'
         f'<circle cx="232" cy="30" r="5" fill="{accent}"/>'
         f'<circle class="ring-pulse" cx="232" cy="30" r="7" fill="none" stroke="{accent}" stroke-width="1.2" opacity="0"/>'
         f'{countup(tile["value"], 18, 100, T_4XL, INK, delay + 0.18)}'
-        f'<text x="18" y="146" font-family="{DISPLAY}" font-size="{T_SM}" font-weight="{W_REG}" fill="{INK_2}">'
-        f'{tile["headline"]}</text>'
-        f'<text x="18" y="170" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">{tile["sub"]}</text>'
+        f'<text x="18" y="146" font-family="{DISPLAY}" font-size="{BAND_MIN_TYPE}" font-weight="{W_REG}" fill="{INK_2}">'
+        f'{html.escape(fit(tile["headline"], TW - 36, BAND_MIN_TYPE))}</text>'
+        f'<text x="18" y="172" font-family="{MONO}" font-size="{BAND_MIN_TYPE}" fill="{INK_3}">'
+        f'{html.escape(fit(tile["sub"], TW - 36, BAND_MIN_TYPE, mono=True))}</text>'
         f"</g>"
     )
     svg = (
@@ -750,113 +696,6 @@ def render_tile(tile: dict, index: int) -> str:
     )
     return embed_fonts(svg)
 
-
-# --------------------------------------------------------------------------- #
-# repo cards
-# --------------------------------------------------------------------------- #
-
-CW, CH = 396, 150
-
-
-def render_repo_card(repo: dict, description: str, index: int) -> str:
-    language = repo.get("language") or "—"
-    colour = LANG_COLOURS.get(language, "#8b949e")
-    delay = 0.05 + index * 0.12
-    body = (
-        f'<g class="enter" style="animation-delay:{delay:.2f}s">{fade_in(delay)}'
-        f'{panel(CW, CH)}'
-        f'<text x="18" y="36" font-family="{DISPLAY}" font-size="16" font-weight="600" fill="#e6edf3">'
-        f'{html.escape(repo["name"])}</text>'
-        f'<text x="18" y="60" font-family="{DISPLAY}" font-size="12" fill="#8b949e">'
-        f'{html.escape(truncate(description, 58))}</text>'
-        f'<circle cx="22" cy="122" r="4" fill="{colour}"/>'
-        f'<text x="33" y="126" font-family="{MONO}" font-size="12" fill="#8b949e">{html.escape(language)}</text>'
-        f'<text x="378" y="126" text-anchor="end" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">'
-        f'\u2605 {repo["stars"]} \u00b7 {relative_days(repo["pushed_at"])}</text>'
-        f"</g>"
-    )
-    svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{CW}" height="{CH}" viewBox="0 0 {CW} {CH}" '
-        f'role="img" aria-label="{html.escape(repo["name"])} — {html.escape(description)}">'
-        f"{base_style()}{body}</svg>\n"
-    )
-    return embed_fonts(svg)
-
-
-# --------------------------------------------------------------------------- #
-# activity chart
-# --------------------------------------------------------------------------- #
-
-AW, AH = 846, 210
-
-
-def render_activity(snapshot: dict) -> str:
-    """Twelve months of output.
-
-    One job only: show the rhythm of the last year. The headline numbers that
-    matter live in the stat tiles, so this chart carries the single total and
-    the busiest month - not a second copy of the streak.
-    """
-    monthly = snapshot["monthly"]
-    total = snapshot["contributions"]
-    busiest = snapshot["busiest_month"]
-
-    header = [
-        f'<text x="36" y="36" font-family="{MONO}" font-size="{T_SM}" letter-spacing="1.5" fill="{BLUE}">12-MONTH ACTIVITY</text>',
-        f'<text x="{AW - 36}" y="36" text-anchor="end" font-family="{DISPLAY}" font-size="{T_XL}" '
-        f'font-weight="{W_BOLD}" fill="{INK}">{total}<tspan font-size="{T_MD}" font-weight="{W_REG}" '
-        f'fill="{INK_3}"> contributions</tspan></text>',
-        f'<text x="{AW - 36}" y="58" text-anchor="end" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">'
-        f'{snapshot["active_days"]} active days   ·   best month {html.escape(busiest["label"])}</text>',
-    ]
-
-    top = 88
-    base = 166
-    max_count = max([m["count"] for m in monthly] or [1])
-    slot = 66
-    bar_w = 46
-    start_x = 36
-    bars = []
-    best = max(monthly, key=lambda m: m["count"])["key"] if monthly else None
-
-    for i, month in enumerate(monthly):
-        bx = start_x + i * slot
-        height = 8 + int((month["count"] / max_count) * (base - top - 12)) if max_count else 8
-        colour = GREEN if month["key"] == best else "#2ea043"
-        delay = 0.15 + i * 0.06
-        bars.append(
-            f'<g class="grow" style="animation-delay:{delay:.2f}s">'
-            f'<rect x="{bx}" y="{base - height}" width="{bar_w}" height="{height}" rx="{R_BAR}" fill="{colour}"/>'
-            f"</g>"
-        )
-        bars.append(
-            f'<text x="{bx + bar_w / 2}" y="188" text-anchor="middle" font-family="{MONO}" font-size="{T_XS}" '
-            f'fill="{INK_3}">{month["label"]}</text>'
-        )
-        if month["key"] == best and month["count"]:
-            bars.append(
-                f'<text x="{bx + bar_w / 2}" y="{base - height - 8}" text-anchor="middle" '
-                f'font-family="{DISPLAY}" font-size="{T_SM}" font-weight="{W_SEMI}" fill="{GREEN}">{month["count"]}</text>'
-            )
-
-    body = (
-        f'<g class="enter">{fade_in(0.1)}'
-        f'{panel(AW, AH)}{"".join(header)}'
-        f'<line x1="36" y1="166" x2="{AW - 36}" y2="166" stroke="{GRID}" stroke-width="1"/>'
-        f'{"".join(bars)}</g>'
-    )
-    svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{AW}" height="{AH}" viewBox="0 0 {AW} {AH}" '
-        f'role="img" aria-label="Contribution activity: {total} contributions over the last 12 months, '
-        f'{snapshot["active_days"]} active days">'
-        f"{base_style()}{body}</svg>\n"
-    )
-    return embed_fonts(svg)
-
-
-# --------------------------------------------------------------------------- #
-# stack band
-# --------------------------------------------------------------------------- #
 
 SW, SH = 846, 206
 
@@ -925,283 +764,657 @@ def render_connect_icon(item: dict) -> str:
     )
 
 
-def render_stack() -> str:
+# --------------------------------------------------------------------------- #
+# viewport bands
+#
+# GitHub's README column is fluid, not fixed. Measured live:
+#
+#     viewport <  768   column = viewport - 82     (phone / tablet)
+#     768..1011         column = viewport - 370    (the profile sidebar appears)
+#     1012..1279        column = viewport - 434    (wider container)
+#     viewport >= 1280  column = 846                (capped)
+#
+# Artwork drawn at one width is therefore squeezed on some devices and
+# stretched on others, and the type inside it shrinks with it: the old
+# 846px hero scaled into a 398px column rendered its 14px console lines at
+# 6.6px, which is not type, it is texture.
+#
+# So every visual is drawn once per band, at that band's widest column, and
+# the browser picks the copy with <picture><source media="(max-width: ...)">.
+# The band table is computed from the measured curve by
+# scripts/compute_bands.py and kept in data/bands.json, so the artwork
+# follows the real layout instead of a guess.
+#
+# A band may shrink its artwork by at most 0.75x before it reaches a phone.
+# The smallest type any band draws with is therefore 16px, which is still
+# 12px on the narrowest screen in the band - the floor below which text
+# stops being readable.
+# --------------------------------------------------------------------------- #
+
+BANDS_FILE = ROOT / "data" / "bands.json"
+
+BAND_MIN_TYPE = 16
+BAND_MIN_RENDERED = 12
+
+
+def load_bands() -> list[dict]:
+    if not BANDS_FILE.exists():
+        return []
+    return json.loads(BANDS_FILE.read_text(encoding="utf-8"))
+
+
+def mono_width(text: str, size: int) -> float:
+    """JetBrains Mono advances 0.6em for every glyph."""
+    return len(text) * size * 0.6
+
+
+def sans_width(text: str, size: int) -> float:
+    """A close-enough Inter width estimate, used for line breaking."""
+    narrow = set("iljtfrI.,;:'`|()[]{}!-")
+    wide = set("mwMW@%")
+    total = 0.0
+    for char in text:
+        if char in narrow:
+            total += 0.30
+        elif char in wide:
+            total += 0.86
+        elif char.isupper():
+            total += 0.66
+        elif char.isdigit():
+            total += 0.57
+        else:
+            total += 0.53
+    return total * size
+
+
+def fit(text: str, limit: float, size: int, mono: bool = False) -> str:
+    """Shorten text until it fits the space it has."""
+    measure = mono_width if mono else sans_width
+    if measure(text, size) <= limit:
+        return text
+    ellipsis = "\u2026"
+    while text and measure(text + ellipsis, size) > limit:
+        text = text[:-1]
+    return text.rstrip() + ellipsis
+
+
+def wrap(text: str, limit: float, size: int, mono: bool = False, lines: int = 2) -> list[str]:
+    """Break text into at most `lines` lines that each fit `limit` pixels."""
+    measure = mono_width if mono else sans_width
+    out: list[str] = []
+    current = ""
+    for word in text.split():
+        candidate = f"{current} {word}".strip()
+        if current and measure(candidate, size) > limit:
+            out.append(current)
+            current = word
+            if len(out) == lines:
+                break
+        else:
+            current = candidate
+    if current and len(out) < lines:
+        out.append(current)
+    if out:
+        out[-1] = fit(out[-1], limit, size, mono)
+    return out
+
+
+def pack(items: list[str], limit: float, size: int, separator: str = " \u00b7 ") -> list[str]:
+    """Lay a list of fragments out over as many lines as they need."""
+    measure = mono_width
+    lines: list[str] = []
+    current = ""
+    for item in items:
+        candidate = f"{current}{separator}{item}" if current else item
+        if current and measure(candidate, size) > limit:
+            lines.append(current)
+            current = item
+        else:
+            current = candidate
+    if current:
+        lines.append(current)
+    return lines
+
+
+# --------------------------------------------------------------------------- #
+# hero - the terminal, and on wide bands a radar beside it
+# --------------------------------------------------------------------------- #
+
+HERO_RADAR_MIN = 520
+HERO_CONSOLE_X = 280
+HERO_HEIGHT = 320
+
+
+def hero_prompt(x: int, y: int) -> str:
+    return (
+        f'<text class="print" x="{x}" y="{y}" font-family="{MONO}" font-size="{BAND_MIN_TYPE}" '
+        f'fill="{GREEN}" style="animation-delay:.10s">'
+        f'<tspan fill="{GREEN}">cynex@kali</tspan><tspan fill="{INK_3}">:~$ </tspan>'
+        f'<tspan fill="{INK_2}">whoami</tspan>{print_in(0.10)}</text>'
+    )
+
+
+def hero_rows(rows: list[tuple[str, str]], x: int, y: int, gap: int) -> list[str]:
+    parts = []
+    for i, (label, value) in enumerate(rows):
+        delay = 0.30 + i * 0.08
+        parts.append(
+            f'<text class="print" x="{x}" y="{y + i * gap}" font-family="{MONO}" '
+            f'font-size="{BAND_MIN_TYPE}" style="animation-delay:{delay:.2f}s">'
+            f'<tspan fill="{BLUE}">{html.escape(label.ljust(6))}</tspan>'
+            f'<tspan fill="{INK_2}">{html.escape(value)}</tspan>{print_in(delay)}</text>'
+        )
+    return parts
+
+
+def hero_stats(snapshot: dict, x: int, y: int, limit: float) -> tuple[list[str], int]:
+    """The live counters, wrapped into as many lines as the space needs."""
+    items = [
+        f"{snapshot['contributions']} contributions",
+        f"{snapshot['current_streak']}d streak",
+        f"{snapshot['followers']} followers",
+        f"{snapshot['total_stars']} stars",
+    ]
+    lines = pack(items, limit, BAND_MIN_TYPE)
+    parts = []
+    for i, line in enumerate(lines):
+        delay = 1.05 + i * 0.10
+        parts.append(
+            f'<text class="print" x="{x}" y="{y + i * 22}" font-family="{MONO}" '
+            f'font-size="{BAND_MIN_TYPE}" fill="{INK_3}" style="animation-delay:{delay:.2f}s">'
+            f"{html.escape(line)}{print_in(delay)}</text>"
+        )
+    return parts, len(lines)
+
+
+def render_hero_band(snapshot: dict, width: int) -> tuple[str, int]:
+    """The hero, drawn at the width of the band it belongs to.
+
+    Two compositions. A wide band gets the radar and the terminal side by
+    side; a narrow band gets the terminal alone, because a radar and a
+    terminal that can still be read do not both fit in 400px.
+    """
+    if width >= HERO_RADAR_MIN:
+        return _hero_radar(snapshot, width)
+    return _hero_terminal(snapshot, width)
+
+
+def _hero_radar(snapshot: dict, width: int) -> tuple[str, int]:
+    console_x = HERO_CONSOLE_X
+    console_w = width - console_x - 24
+    parts = [radar(140, 160, 116)]
+    parts.append(hero_prompt(console_x, 44))
+    parts.extend(hero_rows(IDENTITY_SHORT, console_x, 84, 30))
+    stats, _ = hero_stats(snapshot, console_x, 290, console_w)
+    parts.extend(stats)
+    parts.append(f'<circle class="live" cx="{console_x + 6}" cy="286" r="3.5" fill="{GREEN}"/>')
+
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{HERO_HEIGHT}" '
+        f'viewBox="0 0 {width} {HERO_HEIGHT}" role="img" aria-label="Abdul Manan \u2014 founder of '
+        f'CYNEX Studio, BScS at UAJK, building with Next.js, React and TypeScript">'
+        f"{base_style('140px 160px')}{panel(width, HERO_HEIGHT)}{''.join(parts)}</svg>\n"
+    )
+    return embed_fonts(svg), HERO_HEIGHT
+
+
+def _hero_terminal(snapshot: dict, width: int) -> tuple[str, int]:
+    pad = 14
+    content = width - pad * 2
+    parts = [hero_prompt(pad, 32)]
+    parts.extend(hero_rows(IDENTITY_SHORT, pad, 62, 28))
+
+    stat_y = 232
+    stats, lines = hero_stats(snapshot, pad, stat_y, content)
+    parts.extend(stats)
+    parts.append(f'<circle class="live" cx="{pad + 6}" cy="{stat_y - 4}" r="3.5" fill="{GREEN}"/>')
+
+    height = stat_y + lines * 22 + 18
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
+        f'viewBox="0 0 {width} {height}" role="img" aria-label="Abdul Manan \u2014 founder of '
+        f'CYNEX Studio, BScS at UAJK, building with Next.js, React and TypeScript">'
+        f"<style>"
+        f".print{{transform-box:view-box;transform-origin:0 0}}"
+        f"@media (prefers-reduced-motion: no-preference){{"
+        f".print{{animation:rise .5s ease-out both}}"
+        f".live{{animation:pulse 2.6s ease-in-out infinite}}"
+        f"}}"
+        f"@keyframes rise{{from{{transform:translateY(6px)}}to{{transform:translateY(0)}}}}"
+        f"@keyframes pulse{{0%,100%{{opacity:1}}50%{{opacity:.35}}}}"
+        f"</style>"
+        f'<rect width="{width}" height="{height}" rx="{R_CARD}" fill="{BG}"/>'
+        f'<rect x="0.5" y="0.5" width="{width - 1}" height="{height - 1}" rx="{R_CARD}" '
+        f'fill="none" stroke="{BORDER}"/>'
+        f'{"".join(parts)}</svg>\n'
+    )
+    return embed_fonts(svg), height
+
+
+# --------------------------------------------------------------------------- #
+# toolbelt
+# --------------------------------------------------------------------------- #
+
+STACK_ICON_TOP = 32
+STACK_ROW_H = 76
+
+
+def render_stack_band(width: int) -> tuple[str, int]:
     """The toolbelt: official brand marks, grouped by what they are for.
 
     No word labels - the marks are the labels. Every icon keeps a <title> so
     the artwork still names itself for screen readers and for anyone who
-    inspects the SVG.
+    inspects the SVG. The grouping changes with the band: four across when
+    there is room, two by two in the middle, one column on a phone.
     """
     icons = _icons()
     pad = 16
     gutter = 16
-    col_w = (SW - pad * 2 - gutter * 3) / 4
-    icon_size = 28
-    icon_gap = 10
 
-    parts = [f'<g class="enter">{fade_in(0.08)}{panel(SW, SH)}']
+    if width >= 740:
+        columns, icon_size, icon_gap = 4, 26, 8
+    elif width >= 400:
+        columns, icon_size, icon_gap = 2, 28, 10
+    else:
+        columns, icon_size, icon_gap = 1, 28, 10
+    rows = math.ceil(len(STACK) / columns)
+    cell_w = (width - pad * 2 - gutter * (columns - 1)) / columns
+
+    height = 24 + rows * STACK_ROW_H + 16
+    parts = [f'<g class="enter">{fade_in(0.08)}{panel(width, height)}']
 
     for index, (label, accent, slugs) in enumerate(STACK):
-        x = pad + index * (col_w + gutter)
+        column, row = divmod(index, columns)
+        x = pad + column * (cell_w + gutter)
+        top = 24 + row * STACK_ROW_H
 
-        if index:
+        if column:
             parts.append(
-                f'<line x1="{x - gutter / 2:.1f}" y1="30" x2="{x - gutter / 2:.1f}" y2="{SH - 30}" '
+                f'<line x1="{x - gutter / 2:.1f}" y1="30" x2="{x - gutter / 2:.1f}" y2="{height - 26}" '
                 f'stroke="#21262d" stroke-width="1"/>'
             )
 
         parts.append(
-            f'<text x="{x:.1f}" y="40" font-family="{MONO}" font-size="12" letter-spacing="1.4" '
-            f'fill="{accent}">{html.escape(label)}</text>'
+            f'<text x="{x:.1f}" y="{top + 12}" font-family="{MONO}" font-size="{BAND_MIN_TYPE}" '
+            f'letter-spacing="1.0" fill="{accent}">{html.escape(label)}</text>'
         )
         parts.append(
-            f'<rect x="{x:.1f}" y="50" width="30" height="2" rx="2" fill="{accent}" opacity="0.7"/>'
+            f'<rect x="{x:.1f}" y="{top + 20}" width="30" height="2" rx="{R_BAR}" '
+            f'fill="{accent}" opacity="0.7"/>'
         )
 
-        row = [icons.get(slug) for slug in slugs]
-        row = [item for item in row if item]
-        if not row:
+        row_icons = [icons.get(slug) for slug in slugs]
+        row_icons = [item for item in row_icons if item]
+        if not row_icons:
             continue
-        total = len(row) * icon_size + (len(row) - 1) * icon_gap
-        start = x + (col_w - total) / 2
-        top = 78
-        for position, item in enumerate(row):
+        total = len(row_icons) * icon_size + (len(row_icons) - 1) * icon_gap
+        start = x + (cell_w - total) / 2
+        for position, item in enumerate(row_icons):
             slug = item["slug"]
             ix = start + position * (icon_size + icon_gap)
             scale = icon_size / 24
             dx, dy = ICON_OFFSETS.get(slug, (0.0, 0.0))
             parts.append(
-                f'<g transform="translate({ix + dx:.2f},{top + dy:.2f}) scale({scale:.4f})" opacity="0.95">'
+                f'<g transform="translate({ix + dx:.2f},{top + STACK_ICON_TOP + dy:.2f}) '
+                f'scale({scale:.4f})" opacity="0.95">'
                 f"<title>{html.escape(item['title'])}</title>"
                 f'<path d="{item["path"]}" fill="{item["hex"]}"/></g>'
             )
 
     parts.append(
-        f'<text x="{SW - pad}" y="40" text-anchor="end" font-family="{MONO}" font-size="12" '
-        f'letter-spacing="1.0" fill="#8b949e">19 TOOLS</text>'
+        f'<text x="{width - pad}" y="{height - 14}" text-anchor="end" font-family="{MONO}" '
+        f'font-size="{BAND_MIN_TYPE}" fill="{INK_3}">19 TOOLS</text>'
     )
     parts.append("</g>")
 
     svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{SW}" height="{SH}" viewBox="0 0 {SW} {SH}" '
-        f'role="img" aria-label="Technology stack: Next.js, React, TypeScript, Tailwind CSS, Vite, Three.js, '
-        f'GSAP, Framer, WebGL, Node.js, Python, PostgreSQL, Prisma, Postman, Kali Linux, GNU Bash, '
-        f'Burp Suite, Wireshark and Docker">'
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
+        f'viewBox="0 0 {width} {height}" role="img" aria-label="Technology stack: Next.js, React, '
+        f'TypeScript, Tailwind CSS, Vite, Three.js, GSAP, Framer, WebGL, Node.js, Python, PostgreSQL, '
+        f'Prisma, Postman, Kali Linux, GNU Bash, Burp Suite, Wireshark and Docker">'
         f"{base_style()}{''.join(parts)}</svg>\n"
     )
-    return embed_fonts(svg)
+    return embed_fonts(svg), height
 
 
 # --------------------------------------------------------------------------- #
-# mobile variants
-#
-# GitHub's README column is 846px on desktop but only ~418px on a phone. A
-# desktop-width SVG scaled down to 418 turns 12px type into 6px - unreadable.
-# Every visual therefore gets a second, purpose-built 400px composition and
-# the README swaps them with <picture><source media="(max-width: 767px)">.
+# activity
 # --------------------------------------------------------------------------- #
 
-MW = 400
+def render_activity_band(snapshot: dict, width: int) -> tuple[str, int]:
+    """Twelve months of output.
 
-MOBILE_IDENTITY = [
-    ("name", "Abdul Manan"),
-    ("role", "Founder, CYNEX Studio"),
-    ("study", "BSCS - UAJK"),
-    ("base", "Muzaffarabad, AK"),
-    ("builds", "Next.js - React - TS"),
-    ("live", "cynex.online"),
-]
-
-
-def render_hero_mobile(snapshot: dict) -> str:
-    """A console card, not a squeezed console card."""
-    h = 236
-    parts = [
-        f'<text class="print" x="18" y="32" font-family="{MONO}" font-size="{T_SM}" fill="{GREEN}" '
-        f'style="animation-delay:.10s">'
-        f'<tspan fill="{GREEN}">cynex@kali</tspan><tspan fill="{INK_3}">:~$ </tspan>'
-        f'<tspan fill="{INK_2}">whoami</tspan>{print_in(0.10)}</text>'
-    ]
-    for i, (label, value) in enumerate(MOBILE_IDENTITY):
-        delay = 0.30 + i * 0.10
-        parts.append(
-            f'<text class="print" x="18" y="{66 + i * 26}" font-family="{MONO}" font-size="{T_SM}" '
-            f'style="animation-delay:{delay:.2f}s">'
-            f'<tspan fill="{BLUE}">{html.escape(label.ljust(6))}</tspan>'
-            f'<tspan fill="{INK_2}">{html.escape(value)}</tspan>{print_in(delay)}</text>'
-        )
-
-    stats = (
-        f"{snapshot['contributions']} contributions - {snapshot['public_repos']} repos",
-        f"{snapshot['followers']} followers - {snapshot['total_stars']} stars",
-    )
-    for i, line in enumerate(stats):
-        delay = 1.05 + i * 0.10
-        parts.append(
-            f'<text class="print" x="18" y="{196 + i * 20}" font-family="{MONO}" font-size="{T_XS}" '
-            f'fill="{INK_3}" style="animation-delay:{delay:.2f}s">{html.escape(line)}{print_in(delay)}</text>'
-        )
-    parts.append(f'<circle class="live" cx="22" cy="192" r="3.5" fill="{GREEN}"/>')
-
-    svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{MW}" height="{h}" viewBox="0 0 {MW} {h}" '
-        f'role="img" aria-label="Abdul Manan - CYNEX Studio console profile">'
-        f'<style>'
-        f'.print{{transform-box:view-box;transform-origin:0 0}}'
-        f'@media (prefers-reduced-motion: no-preference){{'
-        f'.print{{animation:rise .5s ease-out both}}'
-        f'.live{{animation:pulse 2.6s ease-in-out infinite}}'
-        f'}}'
-        f'@keyframes rise{{from{{transform:translateY(6px)}}to{{transform:translateY(0)}}}}'
-        f'@keyframes pulse{{0%,100%{{opacity:1}}50%{{opacity:.35}}}}'
-        f'</style>'
-        f'<rect width="{MW}" height="{h}" rx="{R_CARD}" fill="{BG}"/>'
-        f'<rect x="0.5" y="0.5" width="{MW - 1}" height="{h - 1}" rx="{R_CARD}" fill="none" stroke="{BORDER}"/>'
-        f'{"".join(parts)}</svg>\n'
-    )
-    return embed_fonts(svg)
-
-
-def render_stack_mobile() -> str:
-    """The same four groups, stacked, with type that survives a phone."""
-    h = 4 * 76 + 32
-    parts = [f'<g class="enter">{fade_in(0.08)}{panel(MW, h)}']
-    for index, (label, accent, slugs) in enumerate(STACK):
-        y = 18 + index * 76
-        parts.append(
-            f'<text x="18" y="{y + 12}" font-family="{MONO}" font-size="{T_SM}" letter-spacing="1.4" '
-            f'fill="{accent}">{html.escape(label)}</text>'
-        )
-        parts.append(
-            f'<rect x="18" y="{y + 20}" width="28" height="2" rx="{R_BAR}" fill="{accent}" opacity="0.7"/>'
-        )
-
-        icons = _icons()
-        row = [icons.get(slug) for slug in slugs]
-        row = [item for item in row if item]
-        if not row:
-            continue
-        size, gap = 24, 10
-        for position, item in enumerate(row):
-            ix = 18 + position * (size + gap)
-            dx, dy = ICON_OFFSETS.get(item["slug"], (0.0, 0.0))
-            scale = size / 24
-            parts.append(
-                f'<g transform="translate({ix + dx:.2f},{y + 32 + dy:.2f}) scale({scale:.4f})" opacity="0.95">'
-                f"<title>{html.escape(item['title'])}</title>"
-                f'<path d="{item["path"]}" fill="{item["hex"]}"/></g>'
-            )
-    parts.append("</g>")
-
-    svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{MW}" height="{h}" viewBox="0 0 {MW} {h}" '
-        f'role="img" aria-label="Technology stack: Next.js, React, TypeScript, Tailwind CSS, Vite, Three.js, '
-        f'GSAP, Framer, WebGL, Node.js, Python, PostgreSQL, Prisma, Postman, Kali Linux, GNU Bash, '
-        f'Burp Suite, Wireshark and Docker">'
-        f"{base_style()}{''.join(parts)}</svg>\n"
-    )
-    return embed_fonts(svg)
-
-
-def render_activity_mobile(snapshot: dict) -> str:
-    """The same twelve months, sized so a 12px month label is still 12px."""
-    h = 196
+    One job only: show the rhythm of the last year. The headline numbers that
+    matter live in the stat tiles, so this chart carries the single total and
+    the busiest month - not a second copy of the streak.
+    """
     monthly = snapshot["monthly"]
     total = snapshot["contributions"]
     busiest = snapshot["busiest_month"]
+    pad = 16
+    content = width - pad * 2
+    wide = width >= 430
 
     header = [
-        f'<text x="16" y="26" font-family="{MONO}" font-size="{T_XS}" letter-spacing="1.4" fill="{BLUE}">12-MONTH ACTIVITY</text>',
-        f'<text x="{MW - 16}" y="26" text-anchor="end" font-family="{DISPLAY}" font-size="{T_XL}" '
-        f'font-weight="{W_BOLD}" fill="{INK}">{total}<tspan font-size="{T_XS}" font-weight="{W_REG}" '
-        f'fill="{INK_3}"> contributions</tspan></text>',
-        f'<text x="{MW - 16}" y="46" text-anchor="end" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">'
-        f'{snapshot["active_days"]} active days - best {html.escape(busiest["label"])}</text>',
+        f'<text x="{pad}" y="{30 if wide else 26}" font-family="{MONO}" '
+        f'font-size="{BAND_MIN_TYPE}" letter-spacing="1.0" fill="{BLUE}">12-MONTH ACTIVITY</text>',
     ]
+    if wide:
+        header.append(
+            f'<text x="{width - pad}" y="30" text-anchor="end" font-family="{DISPLAY}" '
+            f'font-size="24" font-weight="{W_BOLD}" fill="{INK}">{total}'
+            f'<tspan font-size="{BAND_MIN_TYPE}" font-weight="{W_REG}" fill="{INK_3}"> contributions</tspan></text>'
+        )
+        header.append(
+            f'<text x="{width - pad}" y="52" text-anchor="end" font-family="{MONO}" '
+            f'font-size="{BAND_MIN_TYPE}" fill="{INK_3}">'
+            f'{snapshot["active_days"]} active days - best {html.escape(busiest["label"])}</text>'
+        )
+        top, base = 78, 154
+    else:
+        header.append(
+            f'<text x="{pad}" y="52" font-family="{DISPLAY}" font-size="24" '
+            f'font-weight="{W_BOLD}" fill="{INK}">{total}'
+            f'<tspan font-size="{BAND_MIN_TYPE}" font-weight="{W_REG}" fill="{INK_3}"> contributions</tspan></text>'
+        )
+        header.append(
+            f'<text x="{pad}" y="74" font-family="{MONO}" font-size="{BAND_MIN_TYPE}" fill="{INK_3}">'
+            f'best {html.escape(busiest["label"])}</text>'
+        )
+        top, base = 96, 164
 
-    top, base = 78, 148
     max_count = max([m["count"] for m in monthly] or [1])
-    slot, bar_w, start_x = 30, 22, 16
+    slot = content / len(monthly) if monthly else content
+    bar_w = max(6, slot - 6)
     best = max(monthly, key=lambda m: m["count"])["key"] if monthly else None
     bars = []
 
     for i, month in enumerate(monthly):
-        bx = start_x + i * slot
+        bx = pad + i * slot
         height = 8 + int((month["count"] / max_count) * (base - top - 12)) if max_count else 8
         colour = GREEN if month["key"] == best else "#2ea043"
         delay = 0.15 + i * 0.05
         bars.append(
             f'<g class="grow" style="animation-delay:{delay:.2f}s">'
-            f'<rect x="{bx}" y="{base - height}" width="{bar_w}" height="{height}" rx="{R_BAR}" fill="{colour}"/>'
-            f"</g>"
+            f'<rect x="{bx:.1f}" y="{base - height}" width="{bar_w:.1f}" height="{height}" '
+            f'rx="{R_BAR}" fill="{colour}"/></g>'
         )
-        if i % 2 == 0:
+        # A month label only appears when it has room. On a phone every other
+        # month is named; the other six bars are still there.
+        if slot >= 40 or i % 2 == 0:
             bars.append(
-                f'<text x="{bx + bar_w / 2}" y="168" text-anchor="middle" font-family="{MONO}" '
-                f'font-size="{T_XS}" fill="{INK_3}">{month["label"]}</text>'
+                f'<text x="{bx + bar_w / 2:.1f}" y="{base + 22}" text-anchor="middle" '
+                f'font-family="{MONO}" font-size="{BAND_MIN_TYPE}" fill="{INK_3}">'
+                f'{month["label"]}</text>'
             )
 
+    height = base + 42
     body = (
         f'<g class="enter">{fade_in(0.1)}'
-        f'{panel(MW, h)}{"".join(header)}'
-        f'<line x1="16" y1="148" x2="{MW - 16}" y2="148" stroke="{GRID}" stroke-width="1"/>'
+        f'{panel(width, height)}{"".join(header)}'
+        f'<line x1="{pad}" y1="{base}" x2="{width - pad}" y2="{base}" stroke="{GRID}" stroke-width="1"/>'
         f'{"".join(bars)}</g>'
     )
     svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{MW}" height="{h}" viewBox="0 0 {MW} {h}" '
-        f'role="img" aria-label="Contribution activity: {total} contributions over the last 12 months">'
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
+        f'viewBox="0 0 {width} {height}" role="img" aria-label="Contribution activity: '
+        f'{total} contributions over the last 12 months">'
         f"{base_style()}{body}</svg>\n"
     )
-    return embed_fonts(svg)
+    return embed_fonts(svg), height
 
 
-def render_repo_card_mobile(repo: dict, description: str, index: int) -> str:
-    """A card built for a 200px column: bigger type, fewer words."""
-    w, h = 200, 112
-    language = repo.get("language") or "-"
-    colour = LANG_COLOURS.get(language, INK_3)
-    delay = 0.05 + index * 0.12
+# --------------------------------------------------------------------------- #
+# selected work - one grid, drawn to fit the band
+# --------------------------------------------------------------------------- #
 
-    words = description.split()
-    lines, current = [], ""
-    for word in words:
-        candidate = f"{current} {word}".strip()
-        if len(candidate) > 28:
-            lines.append(current)
-            current = word
-            if len(lines) == 2:
-                break
-        else:
-            current = candidate
-    if current and len(lines) < 2:
-        lines.append(current)
+# A phone has room for one line of description, a desktop has room for two.
+# The full wording lives in the repository index further down the page.
+FEATURED_SHORT = {
+    "autocore": "Pentest recon orchestrator",
+    "CYNEX-Portfolio": "Cyber portfolio with a live HUD",
+    "nullshield": "Pentest, SOC monitoring and hardening",
+    "ironcore": "Gym: dashboard, pricing and programmes",
+    "Bus-Reservation-System": "C++ console for buses and seats",
+    "flamehouse": "Restaurant template with token themes",
+}
 
-    body = [f'<g class="enter" style="animation-delay:{delay:.2f}s">{fade_in(delay)}{panel(w, h)}']
-    body.append(
-        f'<text x="14" y="28" font-family="{DISPLAY}" font-size="{T_MD}" font-weight="{W_SEMI}" '
-        f'fill="{INK}">{html.escape(truncate(repo["name"], 20))}</text>'
-    )
-    for i, line in enumerate(lines[:2]):
+WORK_GAP = 12
+WORK_CARD_H = 120
+WORK_CARD_H_NARROW = 98
+
+
+def render_work_grid(snapshot: dict, width: int) -> tuple[str, int]:
+    """The six featured repositories as one card grid.
+
+    One artwork, not a table of six: a table cannot reflow, so on a phone it
+    would squeeze each card into a 92px column. The grid is drawn to the
+    band's width instead - two columns where there is room, one where there
+    is not - so every card is read at its own size.
+    """
+    by_name = {r["name"]: r for r in snapshot["repos"]}
+    items = []
+    for name, description in FEATURED:
+        repo = by_name.get(name)
+        if repo:
+            items.append((repo, description))
+
+    columns = 2 if width >= 620 else 1
+    card_w = (width - WORK_GAP * (columns - 1)) / columns
+    pad = 16
+    inner = card_w - pad * 2
+    narrow = columns == 1
+    card_h = WORK_CARD_H_NARROW if narrow else WORK_CARD_H
+    rows = math.ceil(len(items) / columns)
+    height = rows * card_h + (rows - 1) * WORK_GAP
+
+    parts = []
+    for index, (repo, description) in enumerate(items):
+        column, row = divmod(index, columns)
+        x = column * (card_w + WORK_GAP)
+        y = row * (card_h + WORK_GAP)
+        language = repo.get("language") or "-"
+        colour = LANG_COLOURS.get(language, INK_3)
+        delay = 0.05 + index * 0.08
+
+        body = [f'<g class="enter" style="animation-delay:{delay:.2f}s">{fade_in(delay)}']
+        body.append(f'<g transform="translate({x:.1f},{y:.1f})">')
+        body.append(panel(card_w, card_h))
         body.append(
-            f'<text x="14" y="{50 + i * 17}" font-family="{DISPLAY}" font-size="{T_XS}" fill="{INK_2}">'
-            f"{html.escape(line)}</text>"
+            f'<text x="{pad}" y="30" font-family="{DISPLAY}" font-size="{BAND_MIN_TYPE}" '
+            f'font-weight="{W_SEMI}" fill="{INK}">{html.escape(fit(repo["name"], inner, BAND_MIN_TYPE))}</text>'
         )
-    body.append(f'<circle cx="18" cy="92" r="4" fill="{colour}"/>')
-    body.append(
-        f'<text x="29" y="96" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">{html.escape(language)}</text>'
-    )
-    body.append(
-        f'<text x="186" y="96" text-anchor="end" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">'
-        f'★ {repo["stars"]} · {relative_days(repo["pushed_at"])}</text>'
-    )
-    body.append("</g>")
+
+        if narrow:
+            text = FEATURED_SHORT.get(repo["name"], description)
+            body.append(
+                f'<text x="{pad}" y="54" font-family="{DISPLAY}" font-size="{BAND_MIN_TYPE}" '
+                f'fill="{INK_2}">{html.escape(fit(text, inner, BAND_MIN_TYPE))}</text>'
+            )
+            meta_y = 82
+        else:
+            for i, line in enumerate(wrap(description, inner, BAND_MIN_TYPE, lines=2)):
+                body.append(
+                    f'<text x="{pad}" y="{54 + i * 22}" font-family="{DISPLAY}" '
+                    f'font-size="{BAND_MIN_TYPE}" fill="{INK_2}">{html.escape(line)}</text>'
+                )
+            meta_y = 104
+
+        body.append(f'<circle cx="{pad + 6}" cy="{meta_y - 5}" r="4" fill="{colour}"/>')
+        body.append(
+            f'<text x="{pad + 18}" y="{meta_y}" font-family="{MONO}" font-size="{BAND_MIN_TYPE}" '
+            f'fill="{INK_3}">{html.escape(language)}</text>'
+        )
+        body.append(
+            f'<text x="{card_w - pad}" y="{meta_y}" text-anchor="end" font-family="{MONO}" '
+            f'font-size="{BAND_MIN_TYPE}" fill="{INK_3}">'
+            f'\u2605 {repo["stars"]} \u00b7 {relative_days(repo["pushed_at"])}</text>'
+        )
+        body.append("</g></g>")
+        parts.append("".join(body))
 
     svg = (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}" '
-        f'role="img" aria-label="{html.escape(repo["name"])} — {html.escape(description)}">'
-        f"{base_style()}{''.join(body)}</svg>\n"
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
+        f'viewBox="0 0 {width} {height}" role="img" aria-label="Selected work: '
+        f'autocore, CYNEX Portfolio, nullshield, ironcore, Bus Reservation System and flamehouse">'
+        f"{base_style()}{''.join(parts)}</svg>\n"
     )
-    return embed_fonts(svg)
+    return embed_fonts(svg), height
+
+
+# --------------------------------------------------------------------------- #
+# platform gallery
+#
+# The gallery used to be an HTML table. A table cannot reflow, so on a
+# 320px phone GitHub squeezed each of the six screenshots into a 93px
+# column and cut the right-hand side off - the table scrolled sideways
+# inside its own box and the second platform was simply gone.
+#
+# So the gallery is artwork now, drawn in three compositions - one column,
+# two narrow columns, two wide columns - and the browser picks one by
+# viewport, the same way it picks the rest of the profile's art. Each
+# screenshot is embedded in the SVG as a data URI, because an SVG loaded
+# through <img> may not fetch anything from the network.
+# --------------------------------------------------------------------------- #
+
+PLATFORMS = [
+    {
+        "name": "Laxitech",
+        "domain": "laxitech.com",
+        "url": "https://laxitech.com/",
+        "photo": "assets/screens/m/laxitech.jpg",
+        "description": "3D MacBook stage with WebGL aurora lighting.",
+    },
+    {
+        "name": "Vixion Studio",
+        "domain": "vixion.studio",
+        "url": "https://www.vixion.studio/",
+        "photo": "assets/screens/m/vixion.jpg",
+        "description": "Dark-to-light scroll; AI concierge to WhatsApp.",
+    },
+    {
+        "name": "Movix Studio",
+        "domain": "movixstudio.com",
+        "url": "https://www.movixstudio.com/",
+        "photo": "assets/screens/m/movix.jpg",
+        "description": "Instant HD showreel; indexed on Google in 20 min.",
+    },
+    {
+        "name": "Commerce Lions",
+        "domain": "commercelions.com",
+        "url": "https://www.commercelions.com/",
+        "photo": "assets/screens/m/commerce-lions.jpg",
+        "description": "Education portal with protected member accounts.",
+    },
+    {
+        "name": "Super Luxuries",
+        "domain": "superluxuries.store",
+        "url": "https://www.superluxuries.store/",
+        "photo": "assets/screens/m/super-luxuries.jpg",
+        "description": "Dubai + London boutique; WhatsApp checkout.",
+    },
+    {
+        "name": "Mac Vision",
+        "domain": "macvision.store",
+        "url": "https://www.macvision.store/",
+        "photo": "assets/screens/m/mac-vision.jpg",
+        "description": "Apple reseller; founder-locked owner dashboard.",
+    },
+]
+
+# The compositions the gallery is drawn in. Which one serves a viewport is
+# decided by scripts/compute_bands.py and recorded in data/bands.json.
+GALLERY_COMPOSITIONS = {424: 1, 566: 2, 846: 2}
+
+# Every screenshot is 400x250 - 1.6:1 - so the photo slot keeps that ratio
+# and the image is never letterboxed or cropped.
+PHOTO_RATIO = 1.6
+
+
+def _photo_data(path: Path) -> str:
+    """A screenshot as a data URI, for embedding inside the SVG."""
+    return base64.b64encode(path.read_bytes()).decode("ascii")
+
+
+def render_gallery(width: int, columns: int) -> tuple[str, int]:
+    """The six client platforms, as artwork.
+
+    One column on a phone, two where there is room. Each card carries the
+    screenshot, the brand and the domain, so the picture is worth something
+    even before the list underneath it is read.
+    """
+    pad = 12
+    gap = 12
+    card_w = (width - gap * (columns - 1)) / columns
+    photo_w = card_w - pad * 2
+    photo_h = photo_w / PHOTO_RATIO
+
+    # The type has to survive the scale the band puts on it, so the narrow
+    # composition - the one that shrinks hardest - carries larger type.
+    name_size = 24
+    domain_size = 24 if columns == 1 else 20
+    name_y = pad + photo_h + 28
+    domain_y = name_y + 30
+    card_h = domain_y + 12
+
+    rows = math.ceil(len(PLATFORMS) / columns)
+    height = rows * card_h + (rows - 1) * gap
+
+    parts = []
+    for index, platform in enumerate(PLATFORMS):
+        column, row = divmod(index, columns)
+        x = column * (card_w + gap)
+        y = row * (card_h + gap)
+        delay = 0.04 + index * 0.07
+
+        photo = ROOT / platform["photo"]
+        if not photo.exists():
+            continue
+
+        body = [f'<g class="enter" style="animation-delay:{delay:.2f}s">{fade_in(delay)}']
+        body.append(f'<g transform="translate({x:.1f},{y:.1f})">')
+        body.append(panel(card_w, card_h))
+        body.append(
+            f'<defs><clipPath id="g{index}"><rect x="{pad}" y="{pad}" width="{photo_w:.1f}" '
+            f'height="{photo_h:.1f}" rx="{R_CHIP}"/></clipPath></defs>'
+        )
+        body.append(
+            f'<image x="{pad}" y="{pad}" width="{photo_w:.1f}" height="{photo_h:.1f}" '
+            f'preserveAspectRatio="xMidYMid slice" clip-path="url(#g{index})" '
+            f'href="data:image/jpeg;base64,{_photo_data(photo)}"/>'
+        )
+        body.append(
+            f'<text x="{pad}" y="{name_y:.1f}" font-family="{DISPLAY}" font-size="{name_size}" '
+            f'font-weight="{W_SEMI}" fill="{INK}">{html.escape(platform["name"])}</text>'
+        )
+        body.append(
+            f'<text x="{pad}" y="{domain_y:.1f}" font-family="{MONO}" font-size="{domain_size}" '
+            f'fill="{INK_3}">{html.escape(platform["domain"])}</text>'
+        )
+        body.append("</g></g>")
+        parts.append("".join(body))
+
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height:.0f}" '
+        f'viewBox="0 0 {width} {height:.0f}" role="img" aria-label="Six client platforms in '
+        f'production: Laxitech, Vixion Studio, Movix Studio, Commerce Lions, Super Luxuries '
+        f'and Mac Vision">'
+        f"{base_style()}{''.join(parts)}</svg>\n"
+    )
+    return embed_fonts(svg), round(height)
+
+
+def render_platform_list() -> str:
+    """The six platforms as links, one sentence each.
+
+    The artwork cannot be a link - an SVG loaded through <img> carries no
+    anchors - so the writing and the links live here, under the pictures.
+    """
+    lines = [
+        f"**[{platform['name']}]({platform['url']})** \u2014 {platform['description']}"
+        for platform in PLATFORMS
+    ]
+    return "\n".join(lines)
 
 
 # --------------------------------------------------------------------------- #
@@ -1259,6 +1472,148 @@ def update_readme(text: str, block: str) -> str:
         print("warning: auto block markers not found in README.md", file=sys.stderr)
         return text
     return pattern.sub(lambda _: block, text)
+
+
+# --------------------------------------------------------------------------- #
+# README blocks - the artwork the generator owns
+# --------------------------------------------------------------------------- #
+
+BLOCKS = {
+    "HERO": ("<!-- AUTO:HERO:START -->", "<!-- AUTO:HERO:END -->"),
+    "STACK": ("<!-- AUTO:STACK:START -->", "<!-- AUTO:STACK:END -->"),
+    "WORK": ("<!-- AUTO:WORK:START -->", "<!-- AUTO:WORK:END -->"),
+    "ACTIVITY": ("<!-- AUTO:ACTIVITY:START -->", "<!-- AUTO:ACTIVITY:END -->"),
+    "GALLERY": ("<!-- AUTO:GALLERY:START -->", "<!-- AUTO:GALLERY:END -->"),
+}
+
+
+def replace_block(text: str, name: str, body: str) -> str:
+    """Swap the contents of a marked block in the README."""
+    start, end = BLOCKS[name.upper()]
+    pattern = re.compile(re.escape(start) + r".*?" + re.escape(end), re.DOTALL)
+    if not pattern.search(text):
+        print(f"warning: {name} block markers not found in README.md", file=sys.stderr)
+        return text
+    return pattern.sub(lambda _: f"{start}\n{body}\n{end}", text)
+
+
+def picture(sources: list[tuple[int, str, int, int]], fallback: tuple[str, int, int], alt: str) -> str:
+    """A <picture> with one <source> per band, narrowest band first.
+
+    The ``width`` on each source is what makes the browser size the image to
+    the band instead of scaling it down to fit: GitHub keeps the attribute,
+    and Chrome lays the <img> box out from the selected source's width.
+
+    The ``height`` is deliberately left off. GitHub's stylesheet clamps an
+    image with ``max-width: 100%``, and a clamped width does not drag a
+    fixed height along with it - the artwork is then letterboxed inside a
+    box that is far taller than it, with dead space above and below. With
+    no height the browser keeps the artwork's own proportions.
+    """
+    lines = ["<picture>"]
+    for upper, src, width, height in sources:
+        lines.append(
+            f'  <source media="(max-width: {upper}px)" srcset="{src}" width="{width}">'
+        )
+    lines.append(
+        f'  <img src="{fallback[0]}" alt="{alt}" width="{fallback[1]}" />'
+    )
+    lines.append("</picture>")
+    return "\n".join(lines)
+
+
+def build_bands(snapshot: dict) -> dict:
+    """Draw every visual once per band and return the README blocks.
+
+    Returns a mapping of block name to (markdown, written files).
+    """
+    bands = load_bands()
+    if not bands:
+        raise RuntimeError("data/bands.json is missing - run scripts/compute_bands.py")
+
+    artwork: dict[str, dict[str, tuple[str, int]]] = {"hero": {}, "stack": {}, "activity": {}, "work": {}}
+
+    for band in bands:
+        width = band["width"]
+        tag = f"-{width}"
+        svg, height = render_hero_band(snapshot, width)
+        artwork["hero"][tag] = (svg, height)
+        svg, height = render_stack_band(width)
+        artwork["stack"][tag] = (svg, height)
+        svg, height = render_activity_band(snapshot, width)
+        artwork["activity"][tag] = (svg, height)
+        svg, height = render_work_grid(snapshot, width)
+        artwork["work"][tag] = (svg, height)
+
+    alts = {
+        "hero": "Abdul Manan \u2014 founder of CYNEX Studio, BScS at UAJK, building with Next.js, React and TypeScript",
+        "stack": (
+            "Technology stack \u2014 Next.js, React, TypeScript, Tailwind CSS, Vite, Three.js, "
+            "GSAP, Framer, WebGL, Node.js, Python, PostgreSQL, Prisma, Postman, Kali Linux, "
+            "GNU Bash, Burp Suite, Wireshark and Docker"
+        ),
+        "activity": (
+            f"Contribution activity \u2014 {snapshot['contributions']} contributions over the last 12 months"
+        ),
+        "work": (
+            "Selected work \u2014 autocore, CYNEX Portfolio, nullshield, ironcore, "
+            "Bus Reservation System and flamehouse"
+        ),
+    }
+
+    blocks: dict[str, str] = {}
+    for name, files in artwork.items():
+        sources = []
+        for band in bands[:-1]:
+            tag = f"-{band['width']}"
+            svg, height = files[tag]
+            write(ROOT / "assets" / f"{name}{tag}.svg", svg)
+            sources.append((band["upper"], f"./assets/{name}{tag}.svg", band["width"], height))
+
+        last = bands[-1]
+        tag = f"-{last['width']}"
+        svg, height = files[tag]
+        write(ROOT / "assets" / f"{name}{tag}.svg", svg)
+        blocks[name] = picture(sources, (f"./assets/{name}{tag}.svg", last["width"], height), alts[name])
+
+    blocks["gallery"] = build_gallery(bands)
+
+    return blocks
+
+
+def build_gallery(bands: list[dict]) -> str:
+    """Draw the platform gallery in its compositions and wire up the <picture>.
+
+    The gallery is not drawn per band: three compositions cover every band,
+    and data/bands.json says which composition serves which viewport.
+    """
+    drawn: dict[int, tuple[str, int]] = {}
+    for width, columns in GALLERY_COMPOSITIONS.items():
+        drawn[width] = render_gallery(width, columns)
+
+    sources = []
+    for band in bands[:-1]:
+        width = band["gallery"]
+        svg, height = drawn[width]
+        write(ROOT / "assets" / f"gallery-{width}.svg", svg)
+        src = f"./assets/gallery-{width}.svg"
+        if sources and sources[-1][1] == src:
+            # the same composition serves this band too - one source is enough
+            sources[-1] = (band["upper"], src, width, height)
+            continue
+        sources.append((band["upper"], src, width, height))
+
+    last = bands[-1]
+    width = last["gallery"]
+    svg, height = drawn[width]
+    write(ROOT / "assets" / f"gallery-{width}.svg", svg)
+
+    return picture(
+        sources,
+        (f"./assets/gallery-{width}.svg", width, height),
+        "Six client platforms in production \u2014 Laxitech, Vixion Studio, Movix Studio, "
+        "Commerce Lions, Super Luxuries and Mac Vision",
+    ) + "\n\n" + render_platform_list()
 
 
 def update_readme_alts(text: str, snapshot: dict) -> str:
@@ -1325,9 +1680,6 @@ def main() -> int:
 
     write_snapshot(snapshot_path, snapshot)
 
-    write(ROOT / "assets" / "hero.svg", render_hero(snapshot))
-    write(ROOT / "assets" / "hero.mobile.svg", render_hero_mobile(snapshot))
-
     write(ROOT / "assets" / "cta-primary.svg", render_button("Work with me", 168, True))
     write(ROOT / "assets" / "cta-secondary.svg", render_button("Browse all repos", 192, False))
 
@@ -1338,21 +1690,8 @@ def main() -> int:
             tile["value"] = snapshot["current_streak"]
         write(cards / f"tile-{tile['id']}.svg", render_tile(tile, index))
 
-    by_name = {r["name"]: r for r in snapshot["repos"]}
-    for index, (name, description) in enumerate(FEATURED):
-        repo = by_name.get(name)
-        if not repo:
-            continue
-        write(cards / f"repo-{name.lower()}.svg", render_repo_card(repo, description, index))
-        write(
-            cards / f"repo-{name.lower()}.mobile.svg",
-            render_repo_card_mobile(repo, description, index),
-        )
-
-    write(ROOT / "assets" / "activity.svg", render_activity(snapshot))
-    write(ROOT / "assets" / "activity.mobile.svg", render_activity_mobile(snapshot))
-    write(ROOT / "assets" / "stack.svg", render_stack())
-    write(ROOT / "assets" / "stack.mobile.svg", render_stack_mobile())
+    # One copy of every full-width visual per viewport band.
+    blocks = build_bands(snapshot)
 
     icon_dir = ROOT / "assets" / "icons"
     icons = _icons()
@@ -1365,6 +1704,8 @@ def main() -> int:
     if readme_path.exists():
         current = readme_path.read_text(encoding="utf-8")
         updated = update_readme(current, render_repo_index(snapshot))
+        for name, body in blocks.items():
+            updated = replace_block(updated, name, body)
         updated = update_readme_alts(updated, snapshot)
         if updated != current:
             write(readme_path, updated)
