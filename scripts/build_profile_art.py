@@ -44,6 +44,30 @@ ICON_FILE = ROOT / "scripts" / "icons.json"
 DISPLAY = "Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif"
 MONO = "'JetBrains Mono', SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace"
 
+# --------------------------------------------------------------------------- #
+# design system - every visual in the profile is built from these values only
+# --------------------------------------------------------------------------- #
+
+# Type scale: Major Third 1.25 -> 12 14 16 18 20 24 30 36 48 60 72 96
+T_XS, T_SM, T_MD, T_LG, T_XL = 12, 14, 16, 18, 20
+T_2XL, T_3XL, T_4XL, T_5XL, T_6XL = 24, 30, 36, 48, 60
+T_7XL = 72
+
+# Weights: regular / semibold / bold. Nothing else.
+W_REG, W_SEMI, W_BOLD = 400, 600, 700
+
+# Colour: GitHub's own dark palette. Muted ink is #8b949e (6.15:1 on the
+# panel), never #6e7681 (4.12:1 - below the WCAG AA floor for small text).
+BG, SURFACE, BORDER, GRID = "#0d1117", "#161b22", "#30363d", "#21262d"
+INK, INK_2, INK_3 = "#e6edf3", "#c9d1d9", "#8b949e"
+GREEN, BLUE, AMBER, PINK = "#3fb949", "#58a6ff", "#d29922", "#f778ba"
+
+# Radii: one card radius, one chip radius, one bar radius.
+R_CARD, R_CHIP, R_BAR = 12, 6, 2
+
+# Spacing: 8pt scale.
+S_XS, S_S, S_M, S_L, S_XL, S_2XL = 8, 16, 24, 32, 48, 64
+
 _FONT_CACHE: dict = {}
 
 IDENTITY = [
@@ -60,29 +84,32 @@ TILES = [
     {
         "id": "build",
         "label": "BUILD",
+        "metric": "platforms",
         "value": 6,
         "headline": "platforms in production",
         "sub": "Next.js \u00b7 TypeScript \u00b7 Tailwind",
-        "accent": "#58a6ff",
-        "url": "https://cynex.online/works",
+        "accent": BLUE,
+        "url": "https://www.cynex.online/works",
     },
     {
         "id": "security",
         "label": "SECURITY",
-        "value": 216,
+        "metric": "streak",
+        "value": 217,
         "headline": "day contribution streak",
         "sub": "AUTOCORE \u00b7 TryHackMe \u00b7 Kali",
-        "accent": "#3fb949",
-        "url": "https://github.com/Abdul-Manan-C/autocore",
+        "accent": GREEN,
+        "url": "https://tryhackme.com/p/mananhanif01",
     },
     {
         "id": "studio",
         "label": "STUDIO",
+        "metric": "disciplines",
         "value": 10,
         "headline": "engineering disciplines",
         "sub": "3D \u00b7 dashboards \u00b7 AI \u00b7 SEO",
-        "accent": "#d29922",
-        "url": "https://cynex.online",
+        "accent": AMBER,
+        "url": "https://www.cynex.online",
     },
 ]
 
@@ -406,10 +433,13 @@ def embed_fonts(svg: str) -> str:
 # --------------------------------------------------------------------------- #
 
 
-def panel(w: int, h: int, rx: int = 12) -> str:
+def panel(w: int, h: int, rx: int = R_CARD) -> str:
+    """A card: flat fill + a single hairline. Depth comes from the fill, not
+    from a stack of shadows - and the stroke uses the same radius as the fill
+    so there is exactly one corner style in the whole system."""
     return (
-        f'<rect width="{w}" height="{h}" rx="{rx}" fill="#0d1117"/>'
-        f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}" rx="{rx - 0.5}" fill="none" stroke="#30363d"/>'
+        f'<rect width="{w}" height="{h}" rx="{rx}" fill="{BG}"/>'
+        f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}" rx="{rx}" fill="none" stroke="{BORDER}"/>'
     )
 
 
@@ -497,7 +527,7 @@ def truncate(text: str, limit: int) -> str:
 # hero
 # --------------------------------------------------------------------------- #
 
-W, H = 900, 320
+W, H = 846, 320
 CX, CY = 150, 148
 RAD = 116
 
@@ -536,12 +566,12 @@ def radar() -> str:
         hex_pts.append(f"{CX + 26 * math.cos(angle):.1f},{CY + 26 * math.sin(angle):.1f}")
     parts.append(f'<polygon points="{" ".join(hex_pts)}" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>')
     parts.append(
-        f'<text x="{CX}" y="{CY + 8}" text-anchor="middle" font-family="{MONO}" font-size="22" '
+        f'<text x="{CX}" y="{CY + 8}" text-anchor="middle" font-family="{MONO}" font-size="20" '
         f'font-weight="700" fill="#58a6ff">C</text>'
     )
     parts.append(
-        f'<text x="{CX}" y="292" text-anchor="middle" font-family="{MONO}" font-size="10" '
-        f'letter-spacing="2.5" fill="#6e7681">CYNEX STUDIO</text>'
+        f'<text x="{CX}" y="292" text-anchor="middle" font-family="{MONO}" font-size="12" '
+        f'letter-spacing="1.5" fill="#8b949e">CYNEX STUDIO</text>'
     )
     return "".join(parts)
 
@@ -556,7 +586,7 @@ def print_in(delay: float) -> str:
 def console(snapshot: dict) -> str:
     parts = []
     parts.append(
-        f'<text class="print" x="320" y="44" font-family="{MONO}" font-size="15" fill="#3fb949" '
+        f'<text class="print" x="320" y="44" font-family="{MONO}" font-size="14" fill="#3fb949" '
         f'style="animation-delay:.10s">'
         f'<tspan fill="#3fb949">cynex@kali</tspan><tspan fill="#8b949e">:~$ </tspan>'
         f'<tspan fill="#c9d1d9">whoami</tspan>{print_in(0.10)}</text>'
@@ -564,7 +594,7 @@ def console(snapshot: dict) -> str:
     for i, (label, value) in enumerate(IDENTITY):
         delay = 0.34 + i * 0.11
         parts.append(
-            f'<text class="print" x="320" y="{84 + i * 30}" font-family="{MONO}" font-size="15" '
+            f'<text class="print" x="320" y="{84 + i * 30}" font-family="{MONO}" font-size="14" '
             f'style="animation-delay:{delay:.2f}s">'
             f'<tspan fill="#58a6ff">{html.escape(label.ljust(9))}</tspan>'
             f'<tspan fill="#c9d1d9">{html.escape(value)}</tspan>{print_in(delay)}</text>'
@@ -579,12 +609,12 @@ def console(snapshot: dict) -> str:
     )
     parts.append(f'<circle class="live" cx="326" cy="296" r="3.5" fill="#3fb949"/>')
     parts.append(
-        f'<text class="print" x="340" y="300" font-family="{MONO}" font-size="12.5" fill="#8b949e" '
+        f'<text class="print" x="340" y="300" font-family="{MONO}" font-size="12" fill="#8b949e" '
         f'style="animation-delay:1.25s">{html.escape(stats)}{print_in(1.25)}</text>'
     )
     parts.append(
-        f'<text class="print" x="864" y="300" text-anchor="end" font-family="{MONO}" font-size="12" '
-        f'fill="#6e7681" style="animation-delay:1.35s">refreshed daily{print_in(1.35)}</text>'
+        f'<text class="print" x="{W - 36}" y="44" text-anchor="end" font-family="{MONO}" font-size="12" '
+        f'fill="{INK_3}" style="animation-delay:1.35s">refreshed daily{print_in(1.35)}</text>'
     )
     return "".join(parts)
 
@@ -626,13 +656,49 @@ def render_hero(snapshot: dict) -> str:
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
         f'role="img" aria-label="Abdul Manan — CYNEX Studio console profile">'
         f"{defs}{style}"
-        f'<rect width="{W}" height="{H}" rx="14" fill="#0d1117"/>'
-        f'<rect width="{W}" height="{H}" rx="14" fill="url(#scan)"/>'
-        f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="13.5" fill="none" stroke="#30363d"/>'
+        f'<rect width="{W}" height="{H}" rx="12" fill="#0d1117"/>'
+        f'<rect width="{W}" height="{H}" rx="12" fill="url(#scan)"/>'
+        f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" rx="12" fill="none" stroke="#30363d"/>'
         f"{radar()}"
         f'<line x1="292" y1="34" x2="292" y2="286" stroke="#21262d" stroke-width="1"/>'
         f"{console(snapshot)}"
         f"</svg>\n"
+    )
+    return embed_fonts(svg)
+
+
+# --------------------------------------------------------------------------- #
+# call to action
+# --------------------------------------------------------------------------- #
+
+BTN_H = 52
+BTN_R = R_CHIP
+
+
+def render_button(label: str, width: int, primary: bool) -> str:
+    """A real button.
+
+    The README is markdown, so a link can never carry a filled-background
+    treatment - this is the only way to give the page a primary action that
+    actually looks like one. Primary is a solid brand fill; secondary is an
+    outline. Exactly one primary exists on the page.
+    """
+    if primary:
+        fill, stroke, ink = GREEN, GREEN, BG
+    else:
+        fill, stroke, ink = "none", BORDER, INK_2
+
+    text_x = width / 2
+    body = (
+        f'<rect x="0.75" y="0.75" width="{width - 1.5}" height="{BTN_H - 1.5}" rx="{BTN_R}" '
+        f'fill="{fill}" stroke="{stroke}" stroke-width="1.5"/>'
+        f'<text x="{text_x}" y="{BTN_H / 2 + 6}" text-anchor="middle" font-family="{DISPLAY}" '
+        f'font-size="{T_MD}" font-weight="{W_SEMI}" fill="{ink}" letter-spacing="0">{html.escape(label)}</text>'
+    )
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{BTN_H}" '
+        f'viewBox="0 0 {width} {BTN_H}" role="img" aria-label="{html.escape(label)}">'
+        f"{body}</svg>\n"
     )
     return embed_fonts(svg)
 
@@ -661,14 +727,14 @@ def render_tile(tile: dict, index: int) -> str:
         f'<stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>'
         f"</linearGradient></defs>"
         f'{shine}'
-        f'<text x="18" y="36" font-family="{MONO}" font-size="12" letter-spacing="2.4" fill="{accent}">'
+        f'<text x="18" y="36" font-family="{MONO}" font-size="12" letter-spacing="1.5" fill="{accent}">'
         f'{tile["label"]}</text>'
         f'<circle cx="232" cy="30" r="5" fill="{accent}"/>'
         f'<circle class="ring-pulse" cx="232" cy="30" r="7" fill="none" stroke="{accent}" stroke-width="1.2" opacity="0"/>'
-        f"{countup(tile['value'], 18, 100, 54, '#e6edf3', delay + 0.18)}"
-        f'<text x="18" y="146" font-family="{DISPLAY}" font-size="13.5" font-weight="500" fill="#c9d1d9">'
+        f'{countup(tile["value"], 18, 100, T_4XL, INK, delay + 0.18)}'
+        f'<text x="18" y="146" font-family="{DISPLAY}" font-size="{T_SM}" font-weight="{W_REG}" fill="{INK_2}">'
         f'{tile["headline"]}</text>'
-        f'<text x="18" y="170" font-family="{MONO}" font-size="11" fill="#6e7681">{tile["sub"]}</text>'
+        f'<text x="18" y="170" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">{tile["sub"]}</text>'
         f"</g>"
     )
     svg = (
@@ -683,7 +749,7 @@ def render_tile(tile: dict, index: int) -> str:
 # repo cards
 # --------------------------------------------------------------------------- #
 
-CW, CH = 390, 150
+CW, CH = 396, 150
 
 
 def render_repo_card(repo: dict, description: str, index: int) -> str:
@@ -693,13 +759,13 @@ def render_repo_card(repo: dict, description: str, index: int) -> str:
     body = (
         f'<g class="enter" style="animation-delay:{delay:.2f}s">{fade_in(delay)}'
         f'{panel(CW, CH)}'
-        f'<text x="18" y="36" font-family="{DISPLAY}" font-size="16" font-weight="650" fill="#e6edf3">'
+        f'<text x="18" y="36" font-family="{DISPLAY}" font-size="16" font-weight="600" fill="#e6edf3">'
         f'{html.escape(repo["name"])}</text>'
-        f'<text x="18" y="60" font-family="{DISPLAY}" font-size="12.5" fill="#8b949e">'
+        f'<text x="18" y="60" font-family="{DISPLAY}" font-size="12" fill="#8b949e">'
         f'{html.escape(truncate(description, 58))}</text>'
         f'<circle cx="22" cy="122" r="4" fill="{colour}"/>'
-        f'<text x="33" y="126" font-family="{MONO}" font-size="11" fill="#8b949e">{html.escape(language)}</text>'
-        f'<text x="372" y="126" text-anchor="end" font-family="{MONO}" font-size="11" fill="#6e7681">'
+        f'<text x="33" y="126" font-family="{MONO}" font-size="12" fill="#8b949e">{html.escape(language)}</text>'
+        f'<text x="378" y="126" text-anchor="end" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">'
         f'\u2605 {repo["stars"]} \u00b7 {relative_days(repo["pushed_at"])}</text>'
         f"</g>"
     )
@@ -715,71 +781,68 @@ def render_repo_card(repo: dict, description: str, index: int) -> str:
 # activity chart
 # --------------------------------------------------------------------------- #
 
-AW, AH = 880, 210
+AW, AH = 846, 210
 
 
 def render_activity(snapshot: dict) -> str:
+    """Twelve months of output.
+
+    One job only: show the rhythm of the last year. The headline numbers that
+    matter live in the stat tiles, so this chart carries the single total and
+    the busiest month - not a second copy of the streak.
+    """
     monthly = snapshot["monthly"]
-    stats = [
-        ("contributions", snapshot["contributions"]),
-        ("active days", snapshot["active_days"]),
-        ("streak", f"{snapshot['current_streak']}d"),
-        ("best month", snapshot["busiest_month"]["label"]),
-    ]
+    total = snapshot["contributions"]
+    busiest = snapshot["busiest_month"]
 
     header = [
-        f'<text x="28" y="36" font-family="{MONO}" font-size="12" letter-spacing="2.4" fill="#58a6ff">ACTIVITY</text>'
+        f'<text x="36" y="36" font-family="{MONO}" font-size="{T_SM}" letter-spacing="1.5" fill="{BLUE}">12-MONTH ACTIVITY</text>',
+        f'<text x="{AW - 36}" y="36" text-anchor="end" font-family="{DISPLAY}" font-size="{T_XL}" '
+        f'font-weight="{W_BOLD}" fill="{INK}">{total}<tspan font-size="{T_MD}" font-weight="{W_REG}" '
+        f'fill="{INK_3}"> contributions</tspan></text>',
+        f'<text x="{AW - 36}" y="58" text-anchor="end" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">'
+        f'{snapshot["active_days"]} active days   ·   best month {html.escape(busiest["label"])}</text>',
     ]
-    x = 852
-    for label, value in reversed(stats):
-        header.append(
-            f'<text x="{x}" y="30" text-anchor="end" font-family="{DISPLAY}" font-size="17" font-weight="650" '
-            f'fill="#e6edf3">{html.escape(str(value))}</text>'
-        )
-        header.append(
-            f'<text x="{x}" y="46" text-anchor="end" font-family="{MONO}" font-size="10.5" fill="#6e7681">'
-            f'{html.escape(label)}</text>'
-        )
-        x -= 150
 
-    top = 78
+    top = 88
     base = 166
     max_count = max([m["count"] for m in monthly] or [1])
-    slot = 68
+    slot = 66
     bar_w = 46
-    start_x = 40
+    start_x = 36
     bars = []
     best = max(monthly, key=lambda m: m["count"])["key"] if monthly else None
 
     for i, month in enumerate(monthly):
         bx = start_x + i * slot
         height = 8 + int((month["count"] / max_count) * (base - top - 12)) if max_count else 8
-        colour = "#3fb949" if month["key"] == best else "#2ea043"
+        colour = GREEN if month["key"] == best else "#2ea043"
         delay = 0.15 + i * 0.06
         bars.append(
             f'<g class="grow" style="animation-delay:{delay:.2f}s">'
-            f'<rect x="{bx}" y="{base - height}" width="{bar_w}" height="{height}" rx="4" fill="{colour}"/>'
+            f'<rect x="{bx}" y="{base - height}" width="{bar_w}" height="{height}" rx="{R_BAR}" fill="{colour}"/>'
             f"</g>"
         )
         bars.append(
-            f'<text x="{bx + bar_w / 2}" y="188" text-anchor="middle" font-family="{MONO}" font-size="10.5" '
-            f'fill="#6e7681">{month["label"]}</text>'
+            f'<text x="{bx + bar_w / 2}" y="188" text-anchor="middle" font-family="{MONO}" font-size="{T_XS}" '
+            f'fill="{INK_3}">{month["label"]}</text>'
         )
         if month["key"] == best and month["count"]:
             bars.append(
                 f'<text x="{bx + bar_w / 2}" y="{base - height - 8}" text-anchor="middle" '
-                f'font-family="{DISPLAY}" font-size="12" font-weight="650" fill="#3fb949">{month["count"]}</text>'
+                f'font-family="{DISPLAY}" font-size="{T_SM}" font-weight="{W_SEMI}" fill="{GREEN}">{month["count"]}</text>'
             )
 
     body = (
         f'<g class="enter">{fade_in(0.1)}'
         f'{panel(AW, AH)}{"".join(header)}'
-        f'<line x1="28" y1="166" x2="852" y2="166" stroke="#21262d" stroke-width="1"/>'
+        f'<line x1="36" y1="166" x2="{AW - 36}" y2="166" stroke="{GRID}" stroke-width="1"/>'
         f'{"".join(bars)}</g>'
     )
     svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{AW}" height="{AH}" viewBox="0 0 {AW} {AH}" '
-        f'role="img" aria-label="Contribution activity: {snapshot["contributions"]} contributions in the last year">'
+        f'role="img" aria-label="Contribution activity: {total} contributions over the last 12 months, '
+        f'{snapshot["active_days"]} active days">'
         f"{base_style()}{body}</svg>\n"
     )
     return embed_fonts(svg)
@@ -824,6 +887,38 @@ def _icons() -> dict:
     return json.loads(ICON_FILE.read_text(encoding="utf-8"))
 
 
+# --------------------------------------------------------------------------- #
+# connect row - one 44x44 tile per channel
+# --------------------------------------------------------------------------- #
+
+CONNECT = [
+    ("github", "GitHub"),
+    ("linkedin", "LinkedIn"),
+    ("instagram", "Instagram"),
+    ("fiverr", "Fiverr"),
+    ("tryhackme", "TryHackMe"),
+    ("whatsapp", "WhatsApp"),
+    ("mail", "Email"),
+]
+
+CONNECT_SIZE = 44
+CONNECT_GLYPH = 24
+
+
+def render_connect_icon(item: dict) -> str:
+    """A 44x44 tile - the glyph is 24px, so the tap target clears 44px."""
+    scale = CONNECT_GLYPH / (24 if item["slug"] != "linkedin" else 448)
+    height = CONNECT_GLYPH if item["slug"] != "linkedin" else CONNECT_GLYPH * (512 / 448)
+    pad = (CONNECT_SIZE - CONNECT_GLYPH) / 2
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{CONNECT_SIZE}" height="{CONNECT_SIZE}" '
+        f'viewBox="0 0 {CONNECT_SIZE} {CONNECT_SIZE}" role="img" aria-label="{html.escape(item["title"])}">'
+        f'<g transform="translate({pad:.1f},{(CONNECT_SIZE - height) / 2:.1f}) scale({scale:.4f})">'
+        f"<title>{html.escape(item['title'])}</title>"
+        f'<path d="{item["path"]}" fill="{item["hex"]}"/></g></svg>\n'
+    )
+
+
 def render_stack() -> str:
     """The toolbelt: official brand marks, grouped by what they are for.
 
@@ -850,11 +945,11 @@ def render_stack() -> str:
             )
 
         parts.append(
-            f'<text x="{x:.1f}" y="40" font-family="{MONO}" font-size="10.5" letter-spacing="1.7" '
+            f'<text x="{x:.1f}" y="40" font-family="{MONO}" font-size="12" letter-spacing="1.4" '
             f'fill="{accent}">{html.escape(label)}</text>'
         )
         parts.append(
-            f'<rect x="{x:.1f}" y="50" width="30" height="2" rx="1" fill="{accent}" opacity="0.7"/>'
+            f'<rect x="{x:.1f}" y="50" width="30" height="2" rx="2" fill="{accent}" opacity="0.7"/>'
         )
 
         row = [icons.get(slug) for slug in slugs]
@@ -876,8 +971,8 @@ def render_stack() -> str:
             )
 
     parts.append(
-        f'<text x="{SW - pad}" y="40" text-anchor="end" font-family="{MONO}" font-size="10.5" '
-        f'letter-spacing="1.2" fill="#6e7681">19 TOOLS</text>'
+        f'<text x="{SW - pad}" y="40" text-anchor="end" font-family="{MONO}" font-size="12" '
+        f'letter-spacing="1.0" fill="#8b949e">19 TOOLS</text>'
     )
     parts.append("</g>")
 
@@ -892,6 +987,218 @@ def render_stack() -> str:
 
 
 # --------------------------------------------------------------------------- #
+# mobile variants
+#
+# GitHub's README column is 846px on desktop but only ~418px on a phone. A
+# desktop-width SVG scaled down to 418 turns 12px type into 6px - unreadable.
+# Every visual therefore gets a second, purpose-built 400px composition and
+# the README swaps them with <picture><source media="(max-width: 767px)">.
+# --------------------------------------------------------------------------- #
+
+MW = 400
+
+MOBILE_IDENTITY = [
+    ("name", "Abdul Manan"),
+    ("role", "Founder, CYNEX Studio"),
+    ("study", "BSCS - UAJK"),
+    ("base", "Muzaffarabad, AK"),
+    ("builds", "Next.js - React - TS"),
+    ("live", "cynex.online"),
+]
+
+
+def render_hero_mobile(snapshot: dict) -> str:
+    """A console card, not a squeezed console card."""
+    h = 236
+    parts = [
+        f'<text class="print" x="18" y="32" font-family="{MONO}" font-size="{T_SM}" fill="{GREEN}" '
+        f'style="animation-delay:.10s">'
+        f'<tspan fill="{GREEN}">cynex@kali</tspan><tspan fill="{INK_3}">:~$ </tspan>'
+        f'<tspan fill="{INK_2}">whoami</tspan>{print_in(0.10)}</text>'
+    ]
+    for i, (label, value) in enumerate(MOBILE_IDENTITY):
+        delay = 0.30 + i * 0.10
+        parts.append(
+            f'<text class="print" x="18" y="{66 + i * 26}" font-family="{MONO}" font-size="{T_SM}" '
+            f'style="animation-delay:{delay:.2f}s">'
+            f'<tspan fill="{BLUE}">{html.escape(label.ljust(6))}</tspan>'
+            f'<tspan fill="{INK_2}">{html.escape(value)}</tspan>{print_in(delay)}</text>'
+        )
+
+    stats = (
+        f"{snapshot['contributions']} contributions - {snapshot['public_repos']} repos",
+        f"{snapshot['followers']} followers - {snapshot['total_stars']} stars",
+    )
+    for i, line in enumerate(stats):
+        delay = 1.05 + i * 0.10
+        parts.append(
+            f'<text class="print" x="18" y="{196 + i * 20}" font-family="{MONO}" font-size="{T_XS}" '
+            f'fill="{INK_3}" style="animation-delay:{delay:.2f}s">{html.escape(line)}{print_in(delay)}</text>'
+        )
+    parts.append(f'<circle class="live" cx="22" cy="192" r="3.5" fill="{GREEN}"/>')
+
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{MW}" height="{h}" viewBox="0 0 {MW} {h}" '
+        f'role="img" aria-label="Abdul Manan - CYNEX Studio console profile">'
+        f'<style>'
+        f'.print{{transform-box:view-box;transform-origin:0 0}}'
+        f'@media (prefers-reduced-motion: no-preference){{'
+        f'.print{{animation:rise .5s ease-out both}}'
+        f'.live{{animation:pulse 2.6s ease-in-out infinite}}'
+        f'}}'
+        f'@keyframes rise{{from{{transform:translateY(6px)}}to{{transform:translateY(0)}}}}'
+        f'@keyframes pulse{{0%,100%{{opacity:1}}50%{{opacity:.35}}}}'
+        f'</style>'
+        f'<rect width="{MW}" height="{h}" rx="{R_CARD}" fill="{BG}"/>'
+        f'<rect x="0.5" y="0.5" width="{MW - 1}" height="{h - 1}" rx="{R_CARD}" fill="none" stroke="{BORDER}"/>'
+        f'{"".join(parts)}</svg>\n'
+    )
+    return embed_fonts(svg)
+
+
+def render_stack_mobile() -> str:
+    """The same four groups, stacked, with type that survives a phone."""
+    h = 4 * 76 + 32
+    parts = [f'<g class="enter">{fade_in(0.08)}{panel(MW, h)}']
+    for index, (label, accent, slugs) in enumerate(STACK):
+        y = 18 + index * 76
+        parts.append(
+            f'<text x="18" y="{y + 12}" font-family="{MONO}" font-size="{T_SM}" letter-spacing="1.4" '
+            f'fill="{accent}">{html.escape(label)}</text>'
+        )
+        parts.append(
+            f'<rect x="18" y="{y + 20}" width="28" height="2" rx="{R_BAR}" fill="{accent}" opacity="0.7"/>'
+        )
+
+        icons = _icons()
+        row = [icons.get(slug) for slug in slugs]
+        row = [item for item in row if item]
+        if not row:
+            continue
+        size, gap = 24, 10
+        for position, item in enumerate(row):
+            ix = 18 + position * (size + gap)
+            dx, dy = ICON_OFFSETS.get(item["slug"], (0.0, 0.0))
+            scale = size / 24
+            parts.append(
+                f'<g transform="translate({ix + dx:.2f},{y + 32 + dy:.2f}) scale({scale:.4f})" opacity="0.95">'
+                f"<title>{html.escape(item['title'])}</title>"
+                f'<path d="{item["path"]}" fill="{item["hex"]}"/></g>'
+            )
+    parts.append("</g>")
+
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{MW}" height="{h}" viewBox="0 0 {MW} {h}" '
+        f'role="img" aria-label="Technology stack: Next.js, React, TypeScript, Tailwind CSS, Vite, Three.js, '
+        f'GSAP, Framer, WebGL, Node.js, Python, PostgreSQL, Prisma, Postman, Kali Linux, GNU Bash, '
+        f'Burp Suite, Wireshark and Docker">'
+        f"{base_style()}{''.join(parts)}</svg>\n"
+    )
+    return embed_fonts(svg)
+
+
+def render_activity_mobile(snapshot: dict) -> str:
+    """The same twelve months, sized so a 12px month label is still 12px."""
+    h = 196
+    monthly = snapshot["monthly"]
+    total = snapshot["contributions"]
+    busiest = snapshot["busiest_month"]
+
+    header = [
+        f'<text x="16" y="26" font-family="{MONO}" font-size="{T_XS}" letter-spacing="1.4" fill="{BLUE}">12-MONTH ACTIVITY</text>',
+        f'<text x="{MW - 16}" y="26" text-anchor="end" font-family="{DISPLAY}" font-size="{T_XL}" '
+        f'font-weight="{W_BOLD}" fill="{INK}">{total}<tspan font-size="{T_XS}" font-weight="{W_REG}" '
+        f'fill="{INK_3}"> contributions</tspan></text>',
+        f'<text x="{MW - 16}" y="46" text-anchor="end" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">'
+        f'{snapshot["active_days"]} active days - best {html.escape(busiest["label"])}</text>',
+    ]
+
+    top, base = 78, 148
+    max_count = max([m["count"] for m in monthly] or [1])
+    slot, bar_w, start_x = 30, 22, 16
+    best = max(monthly, key=lambda m: m["count"])["key"] if monthly else None
+    bars = []
+
+    for i, month in enumerate(monthly):
+        bx = start_x + i * slot
+        height = 8 + int((month["count"] / max_count) * (base - top - 12)) if max_count else 8
+        colour = GREEN if month["key"] == best else "#2ea043"
+        delay = 0.15 + i * 0.05
+        bars.append(
+            f'<g class="grow" style="animation-delay:{delay:.2f}s">'
+            f'<rect x="{bx}" y="{base - height}" width="{bar_w}" height="{height}" rx="{R_BAR}" fill="{colour}"/>'
+            f"</g>"
+        )
+        if i % 2 == 0:
+            bars.append(
+                f'<text x="{bx + bar_w / 2}" y="168" text-anchor="middle" font-family="{MONO}" '
+                f'font-size="{T_XS}" fill="{INK_3}">{month["label"]}</text>'
+            )
+
+    body = (
+        f'<g class="enter">{fade_in(0.1)}'
+        f'{panel(MW, h)}{"".join(header)}'
+        f'<line x1="16" y1="148" x2="{MW - 16}" y2="148" stroke="{GRID}" stroke-width="1"/>'
+        f'{"".join(bars)}</g>'
+    )
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{MW}" height="{h}" viewBox="0 0 {MW} {h}" '
+        f'role="img" aria-label="Contribution activity: {total} contributions over the last 12 months">'
+        f"{base_style()}{body}</svg>\n"
+    )
+    return embed_fonts(svg)
+
+
+def render_repo_card_mobile(repo: dict, description: str, index: int) -> str:
+    """A card built for a 200px column: bigger type, fewer words."""
+    w, h = 200, 112
+    language = repo.get("language") or "-"
+    colour = LANG_COLOURS.get(language, INK_3)
+    delay = 0.05 + index * 0.12
+
+    words = description.split()
+    lines, current = [], ""
+    for word in words:
+        candidate = f"{current} {word}".strip()
+        if len(candidate) > 28:
+            lines.append(current)
+            current = word
+            if len(lines) == 2:
+                break
+        else:
+            current = candidate
+    if current and len(lines) < 2:
+        lines.append(current)
+
+    body = [f'<g class="enter" style="animation-delay:{delay:.2f}s">{fade_in(delay)}{panel(w, h)}']
+    body.append(
+        f'<text x="14" y="28" font-family="{DISPLAY}" font-size="{T_MD}" font-weight="{W_SEMI}" '
+        f'fill="{INK}">{html.escape(truncate(repo["name"], 20))}</text>'
+    )
+    for i, line in enumerate(lines[:2]):
+        body.append(
+            f'<text x="14" y="{50 + i * 17}" font-family="{DISPLAY}" font-size="{T_XS}" fill="{INK_2}">'
+            f"{html.escape(line)}</text>"
+        )
+    body.append(f'<circle cx="18" cy="92" r="4" fill="{colour}"/>')
+    body.append(
+        f'<text x="29" y="96" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">{html.escape(language)}</text>'
+    )
+    body.append(
+        f'<text x="186" y="96" text-anchor="end" font-family="{MONO}" font-size="{T_XS}" fill="{INK_3}">'
+        f'★ {repo["stars"]} · {relative_days(repo["pushed_at"])}</text>'
+    )
+    body.append("</g>")
+
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}" '
+        f'role="img" aria-label="{html.escape(repo["name"])} — {html.escape(description)}">'
+        f"{base_style()}{''.join(body)}</svg>\n"
+    )
+    return embed_fonts(svg)
+
+
+# --------------------------------------------------------------------------- #
 # README repository index
 # --------------------------------------------------------------------------- #
 
@@ -900,8 +1207,14 @@ END = "<!-- AUTO:REPOS:END -->"
 
 
 def render_repo_index(snapshot: dict) -> str:
+    """The complete public index.
+
+    Sorted by stars, not by date: a visitor scans and satisfices - they take
+    the first reasonable option - so the best work has to come first.
+    """
     rows = []
-    for repo in snapshot["repos"]:
+    ordered = sorted(snapshot["repos"], key=lambda r: (-r["stars"], r["pushed_at"]), reverse=False)
+    for repo in ordered:
         name = repo["name"]
         description, stack = REPO_META.get(
             name,
@@ -931,6 +1244,26 @@ def update_readme(text: str, block: str) -> str:
     return pattern.sub(lambda _: block, text)
 
 
+def update_readme_alts(text: str, snapshot: dict) -> str:
+    """Keep the alt text in step with the numbers in the artwork.
+
+    The figures that move every day - the contribution streak and the yearly
+    total - live in the alt text too, so a screen reader is told the same
+    story the picture shows.
+    """
+    text = re.sub(
+        r"a \d+-day contribution streak",
+        f"a {snapshot['current_streak']}-day contribution streak",
+        text,
+    )
+    text = re.sub(
+        r"Contribution activity — \d+ contributions over the last 12 months",
+        f"Contribution activity — {snapshot['contributions']} contributions over the last 12 months",
+        text,
+    )
+    return text
+
+
 # --------------------------------------------------------------------------- #
 # main
 # --------------------------------------------------------------------------- #
@@ -952,6 +1285,10 @@ def main() -> int:
     write(snapshot_path, json.dumps(snapshot, indent=2) + "\n")
 
     write(ROOT / "assets" / "hero.svg", render_hero(snapshot))
+    write(ROOT / "assets" / "hero.mobile.svg", render_hero_mobile(snapshot))
+
+    write(ROOT / "assets" / "cta-primary.svg", render_button("Work with me", 168, True))
+    write(ROOT / "assets" / "cta-secondary.svg", render_button("Browse all repos", 192, False))
 
     cards = ROOT / "assets" / "cards"
     for index, tile in enumerate(TILES):
@@ -966,14 +1303,28 @@ def main() -> int:
         if not repo:
             continue
         write(cards / f"repo-{name.lower()}.svg", render_repo_card(repo, description, index))
+        write(
+            cards / f"repo-{name.lower()}.mobile.svg",
+            render_repo_card_mobile(repo, description, index),
+        )
 
     write(ROOT / "assets" / "activity.svg", render_activity(snapshot))
+    write(ROOT / "assets" / "activity.mobile.svg", render_activity_mobile(snapshot))
     write(ROOT / "assets" / "stack.svg", render_stack())
+    write(ROOT / "assets" / "stack.mobile.svg", render_stack_mobile())
+
+    icon_dir = ROOT / "assets" / "icons"
+    icons = _icons()
+    for slug, _label in CONNECT:
+        item = icons.get(slug)
+        if item:
+            write(icon_dir / f"{slug}.svg", render_connect_icon(item))
 
     readme_path = ROOT / "README.md"
     if readme_path.exists():
         current = readme_path.read_text(encoding="utf-8")
         updated = update_readme(current, render_repo_index(snapshot))
+        updated = update_readme_alts(updated, snapshot)
         if updated != current:
             write(readme_path, updated)
 

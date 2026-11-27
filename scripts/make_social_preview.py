@@ -85,18 +85,18 @@ def build_svg() -> str:
         f'<rect width="{W}" height="{H}" fill="url(#scan)"/>'
         f'<rect x="0.5" y="0.5" width="{W - 1}" height="{H - 1}" fill="none" stroke="#21262d"/>'
         f'<g transform="translate(700,60) scale(1.9)">{radar()}</g>'
-        f'<text x="88" y="196" font-family="{MONO}" font-size="17" letter-spacing="4" fill="#58a6ff">'
+        f'<text x="88" y="196" font-family="{MONO}" font-size="16" letter-spacing="1.6" fill="#58a6ff">'
         f"ABDUL MANAN</text>"
-        f'<text x="88" y="286" font-family="{DISPLAY}" font-size="66" font-weight="700" fill="#e6edf3">'
+        f'<text x="88" y="286" font-family="{DISPLAY}" font-size="60" font-weight="700" fill="#e6edf3">'
         f"Founder, CYNEX Studio</text>"
         f'<text x="88" y="346" font-family="{DISPLAY}" font-size="30" fill="#8b949e">'
         f"Web engineering \u00b7 3D product stages \u00b7 AI automation</text>"
         f'<text x="88" y="392" font-family="{DISPLAY}" font-size="30" fill="#8b949e">'
         f"Offensive tooling \u00b7 Linux \u00b7 Cybersecurity</text>"
         f'<rect x="88" y="432" width="86" height="4" rx="2" fill="#3fb949"/>'
-        f'<text x="88" y="492" font-family="{MONO}" font-size="19" fill="#c9d1d9">{stats}</text>'
-        f'<text x="88" y="536" font-family="{MONO}" font-size="19" fill="#58a6ff">cynex.online</text>'
-        f'<text x="{W - 88}" y="536" text-anchor="end" font-family="{MONO}" font-size="19" fill="#6e7681">'
+        f'<text x="88" y="492" font-family="{MONO}" font-size="18" fill="#c9d1d9">{stats}</text>'
+        f'<text x="88" y="536" font-family="{MONO}" font-size="18" fill="#58a6ff">cynex.online</text>'
+        f'<text x="{W - 88}" y="536" text-anchor="end" font-family="{MONO}" font-size="18" fill="#8b949e">'
         f"github.com/Abdul-Manan-C</text>"
     )
     svg = (

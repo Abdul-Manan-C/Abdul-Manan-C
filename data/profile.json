@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-27T05:31:47Z",
+  "generated_at": "2026-11-27T07:33:35Z",
   "login": "Abdul-Manan-C",
   "name": "Ch Manan",
   "followers": 31,
   "public_repos": 14,
   "public_repos_total": 18,
-  "contributions": 323,
+  "contributions": 325,
   "current_streak": 217,
   "longest_streak": 217,
   "active_days": 235,
@@ -15,9 +15,9 @@
     "count": 15
   },
   "busiest_month": {
-    "key": "2026-03",
-    "label": "Mar",
-    "count": 39
+    "key": "2026-11",
+    "label": "Nov",
+    "count": 40
   },
   "monthly": [
     {
@@ -78,7 +78,7 @@
     {
       "key": "2026-11",
       "label": "Nov",
-      "count": 38
+      "count": 40
     }
   ],
   "repos": [
@@ -87,7 +87,7 @@
       "url": "https://github.com/Abdul-Manan-C/Abdul-Manan-C",
       "language": "Python",
       "stars": 2,
-      "pushed_at": "2026-11-27T05:29:39Z",
+      "pushed_at": "2026-11-27T06:54:03Z",
       "description": "Config files for my GitHub profile."
     },
     {

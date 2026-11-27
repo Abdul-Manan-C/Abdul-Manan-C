@@ -29,10 +29,13 @@ jobs:
           python-version: "3.12"
 
       - name: Install font tooling
-        run: python -m pip install --quiet fonttools brotli
+        run: python -m pip install --quiet fonttools brotli pillow
 
       - name: Capture live platform screenshots
         run: node scripts/cdp_capture.mjs assets/screens
+
+      - name: Build phone-sized variants
+        run: python scripts/shrink_screens.py
 
       - name: Render social preview
         run: python scripts/make_social_preview.py

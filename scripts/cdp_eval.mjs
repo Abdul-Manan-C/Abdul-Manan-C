@@ -9,7 +9,7 @@
  */
 
 import { spawn } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -73,7 +73,7 @@ async function main() {
       "--no-first-run",
       `--user-data-dir=${profile}`,
       `--remote-debugging-port=${port}`,
-      "--window-size=1280,900",
+      `--window-size=${process.env.CDP_WINDOW || "1280,900"}`,
       "about:blank",
     ],
     { stdio: "ignore" },
@@ -127,6 +127,22 @@ async function main() {
 
   await send("Page.enable");
   await send("Runtime.enable");
+
+  // Chrome on Linux refuses a window narrower than ~500px, so a phone
+  // viewport has to be emulated rather than resized.
+  const emulateWidth = Number(process.env.CDP_EMULATE_WIDTH || 0);
+  if (emulateWidth) {
+    const emulateHeight = Number(process.env.CDP_EMULATE_HEIGHT || 844);
+    const scale = Number(process.env.CDP_EMULATE_SCALE || 2);
+    await send("Emulation.setDeviceMetricsOverride", {
+      width: emulateWidth,
+      height: emulateHeight,
+      deviceScaleFactor: scale,
+      mobile: true,
+    });
+    await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+  }
+
   await send("Page.navigate", { url });
   await sleep(WAIT_MS);
 
@@ -136,6 +152,26 @@ async function main() {
     returnByValue: true,
     awaitPromise: true,
   });
+
+  // Optional full-page screenshot - the only way to capture a viewport that
+  // is narrower than Chrome's minimum window size.
+  const shotPath = process.env.CDP_SCREENSHOT;
+  if (shotPath) {
+    const metrics = await send("Page.getLayoutMetrics");
+    const { contentSize } = metrics;
+    const shot = await send("Page.captureScreenshot", {
+      format: "png",
+      captureBeyondViewport: true,
+      clip: {
+        x: 0,
+        y: 0,
+        width: contentSize.width,
+        height: contentSize.height,
+        scale: 1,
+      },
+    });
+    writeFileSync(shotPath, Buffer.from(shot.data, "base64"));
+  }
 
   console.log(JSON.stringify(result.result.value ?? result.result.description, null, 2));
   socket.close();
