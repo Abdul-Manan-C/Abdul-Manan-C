@@ -28,6 +28,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install font tooling
+        run: python -m pip install --quiet fonttools brotli
+
       - name: Capture live platform screenshots
         run: node scripts/cdp_capture.mjs assets/screens
 

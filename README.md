@@ -73,7 +73,13 @@ Delivery details and case studies: [cynex.online/works](https://cynex.online/wor
 
 <div align="center">
 
-<img src="./assets/stack.svg" alt="Technology stack" width="846" />
+<img src="./assets/stack.svg" alt="Technology stack — Next.js, React, TypeScript, Tailwind CSS, Vite, Three.js, GSAP, Framer, WebGL, Node.js, Python, PostgreSQL, Prisma, Postman, Kali Linux, GNU Bash, Burp Suite, Wireshark, Docker" width="846" />
+
+</div>
+
+<div align="center">
+
+*Official brand marks, grouped by what they are for. Every visual on this page is set in Inter and JetBrains Mono — GitHub strips external stylesheets, so the type travels inside each SVG as an embedded WOFF2.*
 
 </div>
 
@@ -167,7 +173,7 @@ live platforms ─→ scripts/cdp_capture.mjs ─────┴─→ assets/sc
                                                 └─→ the repository table above
 ```
 
-No badge wall, no third-party card service, no manual editing — the numbers in the console, the tiles, the chart and the table are all read from GitHub at build time.
+No badge wall, no third-party card service, no manual editing — the numbers in the console, the tiles, the chart and the table are all read from GitHub at build time, and the brand marks come from the official Simple Icons set.
 
 ## Connect
 

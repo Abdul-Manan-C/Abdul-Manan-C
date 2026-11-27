@@ -17,7 +17,9 @@ snapshot is kept and the script exits cleanly.
 
 from __future__ import annotations
 
+import base64
 import html
+import io
 import json
 import math
 import re
@@ -32,8 +34,17 @@ USER = "Abdul-Manan-C"
 API = "https://api.github.com"
 UA = "profile-art-builder/1.0 (+https://github.com/Abdul-Manan-C)"
 
-DISPLAY = "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
-MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace"
+FONT_DIR = ROOT / "scripts" / "fonts"
+FONT_FILES = {
+    "Inter": FONT_DIR / "inter.woff2",
+    "JetBrains Mono": FONT_DIR / "jetbrains.woff2",
+}
+ICON_FILE = ROOT / "scripts" / "icons.json"
+
+DISPLAY = "Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif"
+MONO = "'JetBrains Mono', SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace"
+
+_FONT_CACHE: dict = {}
 
 IDENTITY = [
     ("name", "Abdul Manan \u00b7 CH Manan"),
@@ -307,6 +318,90 @@ def build_snapshot() -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# type: embedded Google Fonts
+# --------------------------------------------------------------------------- #
+
+
+def _subset_base64(font_path: Path, characters: set) -> str:
+    """Base64 WOFF2 for this font, cut down to the glyphs actually drawn.
+
+    GitHub serves README images through camo and an SVG loaded through <img>
+    cannot fetch anything, so the only way to get real Inter / JetBrains Mono
+    into the artwork is to carry the font inside the file. The build keeps the
+    raw font on disk and embeds a per-card subset, which is roughly a tenth
+    of the size of the full face.
+    """
+    key = (str(font_path), tuple(sorted(characters)))
+    if key in _FONT_CACHE:
+        return _FONT_CACHE[key]
+
+    raw = font_path.read_bytes()
+    try:
+        from fontTools.subset import Options, Subsetter
+        from fontTools.ttLib import TTFont
+
+        font = TTFont(io.BytesIO(raw))
+        options = Options()
+        options.flavor = "woff2"
+        options.layout_features = ["kern", "liga", "calt", "ccmp", "locl"]
+        options.hinting = False
+        options.desubroutinize = True
+        options.notdef_outline = True
+        options.recalc_bounds = False
+        options.name_IDs = ["*"]
+        options.drop_tables = []
+        subsetter = Subsetter(options=options)
+        subsetter.populate(unicodes={ord(char) for char in characters if ord(char) > 31})
+        subsetter.subset(font)
+        buffer = io.BytesIO()
+        font.flavor = "woff2"
+        font.save(buffer)
+        raw = buffer.getvalue()
+    except Exception as exc:  # fontTools or brotli missing: ship the full face
+        print(f"note: font subsetting unavailable ({exc}); embedding full face", file=sys.stderr)
+
+    encoded = base64.b64encode(raw).decode("ascii")
+    _FONT_CACHE[key] = encoded
+    return encoded
+
+
+def _drawn_characters(svg: str) -> set:
+    """Every character that is painted in this SVG."""
+    characters = set()
+    for chunk in re.findall(r">([^<]*)<", svg):
+        characters.update(html.unescape(chunk))
+    return characters
+
+
+def embed_fonts(svg: str) -> str:
+    """Insert @font-face rules for the families this SVG actually uses."""
+    families = []
+    if "JetBrains Mono" in svg and FONT_FILES["JetBrains Mono"].exists():
+        families.append("JetBrains Mono")
+    if "Inter" in svg and FONT_FILES["Inter"].exists():
+        families.append("Inter")
+    if not families:
+        return svg
+
+    characters = _drawn_characters(svg)
+    characters.update(" ·—→0123456789")
+
+    faces = []
+    for family in families:
+        data = _subset_base64(FONT_FILES[family], characters)
+        faces.append(
+            f"@font-face{{font-family:'{family}';font-style:normal;font-weight:100 900;"
+            f"font-display:block;src:url(data:font/woff2;base64,{data}) format('woff2')}}"
+        )
+
+    style = "<style>" + "".join(faces) + "</style>"
+    opening = re.search(r"<svg\b[^>]*>", svg)
+    if not opening:
+        return svg
+    return svg[: opening.end()] + style + svg[opening.end() :]
+
+
+# --------------------------------------------------------------------------- #
 # shared svg helpers
 # --------------------------------------------------------------------------- #
 
@@ -527,7 +622,7 @@ def render_hero(snapshot: dict) -> str:
         "@keyframes rise{from{transform:translateY(6px)}to{transform:translateY(0)}}"
         "</style>"
     )
-    return (
+    svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
         f'role="img" aria-label="Abdul Manan — CYNEX Studio console profile">'
         f"{defs}{style}"
@@ -539,6 +634,7 @@ def render_hero(snapshot: dict) -> str:
         f"{console(snapshot)}"
         f"</svg>\n"
     )
+    return embed_fonts(svg)
 
 
 # --------------------------------------------------------------------------- #
@@ -575,11 +671,12 @@ def render_tile(tile: dict, index: int) -> str:
         f'<text x="18" y="170" font-family="{MONO}" font-size="11" fill="#6e7681">{tile["sub"]}</text>'
         f"</g>"
     )
-    return (
+    svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{TW}" height="{TH}" viewBox="0 0 {TW} {TH}" '
         f'role="img" aria-label="{tile["label"]}: {tile["value"]} {tile["headline"]}">'
         f"{base_style()}{body}</svg>\n"
     )
+    return embed_fonts(svg)
 
 
 # --------------------------------------------------------------------------- #
@@ -606,11 +703,12 @@ def render_repo_card(repo: dict, description: str, index: int) -> str:
         f'\u2605 {repo["stars"]} \u00b7 {relative_days(repo["pushed_at"])}</text>'
         f"</g>"
     )
-    return (
+    svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{CW}" height="{CH}" viewBox="0 0 {CW} {CH}" '
         f'role="img" aria-label="{html.escape(repo["name"])} — {html.escape(description)}">'
         f"{base_style()}{body}</svg>\n"
     )
+    return embed_fonts(svg)
 
 
 # --------------------------------------------------------------------------- #
@@ -679,60 +777,118 @@ def render_activity(snapshot: dict) -> str:
         f'<line x1="28" y1="166" x2="852" y2="166" stroke="#21262d" stroke-width="1"/>'
         f'{"".join(bars)}</g>'
     )
-    return (
+    svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{AW}" height="{AH}" viewBox="0 0 {AW} {AH}" '
         f'role="img" aria-label="Contribution activity: {snapshot["contributions"]} contributions in the last year">'
         f"{base_style()}{body}</svg>\n"
     )
+    return embed_fonts(svg)
 
 
 # --------------------------------------------------------------------------- #
 # stack band
 # --------------------------------------------------------------------------- #
 
-SW, SH = 846, 214
+SW, SH = 846, 206
 
 STACK = [
-    ("FRONTEND", "#58a6ff", ["Next.js", "React", "TypeScript", "Tailwind", "Vite"]),
-    ("MOTION / 3D", "#d29922", ["Three.js", "GSAP", "Framer Motion", "WebGL"]),
-    ("BACKEND / DATA", "#3fb949", ["Node.js", "Python", "PostgreSQL", "Prisma", "REST"]),
-    ("SECURITY / OPS", "#f778ba", ["Kali", "Bash", "Nmap", "Burp Suite", "Docker"]),
+    ("FRONTEND", "#58a6ff", ["nextdotjs", "react", "typescript", "tailwindcss", "vite"]),
+    ("MOTION / 3D", "#d29922", ["threedotjs", "gsap", "framer", "webgl"]),
+    ("BACKEND / DATA", "#3fb949", ["nodedotjs", "python", "postgresql", "prisma", "postman"]),
+    ("SECURITY / OPS", "#f778ba", ["kalilinux", "gnubash", "burpsuite", "wireshark", "docker"]),
 ]
+
+# Optical centring: a few marks are wide-and-flat (GSAP, Tailwind) or
+# narrow (Framer), so they are nudged into the middle of their 28px cell
+# instead of hanging from the top-left of it.
+ICON_OFFSETS = {
+    "react": (0.0, 1.5),
+    "tailwindcss": (0.0, 5.6),
+    "vite": (0.0, 0.7),
+    "gsap": (0.0, 8.9),
+    "framer": (4.7, 0.0),
+    "webgl": (0.0, 8.2),
+    "nodedotjs": (1.6, 0.0),
+    "python": (0.2, 0.0),
+    "postgresql": (0.5, 0.0),
+    "prisma": (2.4, 0.0),
+    "kalilinux": (0.0, 3.6),
+    "gnubash": (1.8, 0.0),
+    "docker": (0.0, 4.0),
+}
+
+
+def _icons() -> dict:
+    if not ICON_FILE.exists():
+        return {}
+    return json.loads(ICON_FILE.read_text(encoding="utf-8"))
 
 
 def render_stack() -> str:
-    """A quiet toolbelt: four grouped columns of real, used technologies."""
+    """The toolbelt: official brand marks, grouped by what they are for.
+
+    No word labels - the marks are the labels. Every icon keeps a <title> so
+    the artwork still names itself for screen readers and for anyone who
+    inspects the SVG.
+    """
+    icons = _icons()
+    pad = 16
     gutter = 16
-    col_w = (SW - gutter * 3) / 4
+    col_w = (SW - pad * 2 - gutter * 3) / 4
+    icon_size = 28
+    icon_gap = 10
+
     parts = [f'<g class="enter">{fade_in(0.08)}{panel(SW, SH)}']
 
-    for index, (label, accent, items) in enumerate(STACK):
-        x = 14 + index * (col_w + gutter)
+    for index, (label, accent, slugs) in enumerate(STACK):
+        x = pad + index * (col_w + gutter)
+
+        if index:
+            parts.append(
+                f'<line x1="{x - gutter / 2:.1f}" y1="30" x2="{x - gutter / 2:.1f}" y2="{SH - 30}" '
+                f'stroke="#21262d" stroke-width="1"/>'
+            )
+
         parts.append(
-            f'<text x="{x:.1f}" y="34" font-family="{MONO}" font-size="11" letter-spacing="1.8" '
+            f'<text x="{x:.1f}" y="40" font-family="{MONO}" font-size="10.5" letter-spacing="1.7" '
             f'fill="{accent}">{html.escape(label)}</text>'
         )
         parts.append(
-            f'<rect x="{x:.1f}" y="44" width="34" height="2" rx="1" fill="{accent}" opacity="0.65"/>'
+            f'<rect x="{x:.1f}" y="50" width="30" height="2" rx="1" fill="{accent}" opacity="0.7"/>'
         )
-        y = 62
-        for item in items:
-            width = 7.0 * len(item) + 22
-            parts.append(
-                f'<g><rect x="{x:.1f}" y="{y}" width="{width:.1f}" height="24" rx="12" '
-                f'fill="#161b22" stroke="#30363d"/>'
-                f'<circle cx="{x + 13:.1f}" cy="{y + 12}" r="3" fill="{accent}"/>'
-                f'<text x="{x + 23:.1f}" y="{y + 16}" font-family="{MONO}" font-size="11" '
-                f'fill="#c9d1d9">{html.escape(item)}</text></g>'
-            )
-            y += 30
 
+        row = [icons.get(slug) for slug in slugs]
+        row = [item for item in row if item]
+        if not row:
+            continue
+        total = len(row) * icon_size + (len(row) - 1) * icon_gap
+        start = x + (col_w - total) / 2
+        top = 78
+        for position, item in enumerate(row):
+            slug = item["slug"]
+            ix = start + position * (icon_size + icon_gap)
+            scale = icon_size / 24
+            dx, dy = ICON_OFFSETS.get(slug, (0.0, 0.0))
+            parts.append(
+                f'<g transform="translate({ix + dx:.2f},{top + dy:.2f}) scale({scale:.4f})" opacity="0.95">'
+                f"<title>{html.escape(item['title'])}</title>"
+                f'<path d="{item["path"]}" fill="{item["hex"]}"/></g>'
+            )
+
+    parts.append(
+        f'<text x="{SW - pad}" y="40" text-anchor="end" font-family="{MONO}" font-size="10.5" '
+        f'letter-spacing="1.2" fill="#6e7681">19 TOOLS</text>'
+    )
     parts.append("</g>")
-    return (
+
+    svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{SW}" height="{SH}" viewBox="0 0 {SW} {SH}" '
-        f'role="img" aria-label="Technology stack: frontend, motion and 3D, backend and data, security and operations">'
+        f'role="img" aria-label="Technology stack: Next.js, React, TypeScript, Tailwind CSS, Vite, Three.js, '
+        f'GSAP, Framer, WebGL, Node.js, Python, PostgreSQL, Prisma, Postman, Kali Linux, GNU Bash, '
+        f'Burp Suite, Wireshark and Docker">'
         f"{base_style()}{''.join(parts)}</svg>\n"
     )
+    return embed_fonts(svg)
 
 
 # --------------------------------------------------------------------------- #

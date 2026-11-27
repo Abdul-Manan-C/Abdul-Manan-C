@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from build_profile_art import DISPLAY, MONO, radar  # noqa: E402
+from build_profile_art import DISPLAY, MONO, embed_fonts, radar  # noqa: E402
 
 W, H = 1280, 640
 OUT_SVG = ROOT / "assets" / "social-preview.svg"
@@ -99,10 +99,11 @@ def build_svg() -> str:
         f'<text x="{W - 88}" y="536" text-anchor="end" font-family="{MONO}" font-size="19" fill="#6e7681">'
         f"github.com/Abdul-Manan-C</text>"
     )
-    return (
+    svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
         f'role="img" aria-label="Abdul Manan — Founder, CYNEX Studio">{defs}{style}{body}</svg>\n'
     )
+    return embed_fonts(svg)
 
 
 def to_png(chrome: str) -> bool:

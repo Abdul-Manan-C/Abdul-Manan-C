@@ -6,4 +6,4 @@ __pycache__/
 check.html
 measure.html
 measure-live.html
-audit-*.html
+*audit*.html
