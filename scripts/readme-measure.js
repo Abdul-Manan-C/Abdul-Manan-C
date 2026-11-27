@@ -31,6 +31,26 @@ return (() => {
   });
   out.broken = out.images.filter((i) => !i.ok).length;
 
+  // Section titles must read as labels, not as shouts. The rule is relative
+  // to the body text, because GitHub's body size is 14px (the f5 class) and
+  // its heading sizes are em-based: h2 = 1.5em, h3 = 1.25em, h4 = 1em.
+  // A title may sit at most ONE major-third step above the body.
+  const bodyPx = (() => {
+    const p = readme.querySelector('p');
+    return p ? parseFloat(getComputedStyle(p).fontSize) : 16;
+  })();
+  out.bodyPx = Math.round(bodyPx * 100) / 100;
+  out.headings = [...readme.querySelectorAll('h1,h2,h3,h4,h5,h6')].map((h) => {
+    const cs = getComputedStyle(h);
+    const px = parseFloat(cs.fontSize);
+    return { tag: h.tagName.toLowerCase(),
+             size: Math.round(px * 100) / 100,
+             step: Math.round((px / bodyPx) * 1000) / 1000,
+             weight: cs.fontWeight,
+             rule: cs.borderBottomWidth !== '0px',
+             text: h.textContent.trim().slice(0, 44) };
+  });
+
   const over = [];
   readme.querySelectorAll('*').forEach((el) => {
     const r = el.getBoundingClientRect();

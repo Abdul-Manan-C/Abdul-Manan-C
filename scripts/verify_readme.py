@@ -37,32 +37,17 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = Path("/tmp/opencode/readme-shots")
 PORT = 8732
 
+sys.path.insert(0, str(ROOT / "scripts"))
+import github_css  # noqa: E402
+
 TYPE_SCALE = {12, 14, 16, 18, 20, 24, 30, 36, 48, 60, 72}
 ALLOWED_WEIGHTS = {"400", "600", "700"}
 ALLOWED_RADII = {"2", "6", "12"}
 BG = "#0d1117"
 
-GITHUB_CSS = """
-* { box-sizing: border-box; }
-body { margin:0; background:#0d1117; color:#e6edf3;
-  font:16px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Noto Sans,Helvetica,Arial,sans-serif; }
-#wrap { width: 100%; max-width: 846px; margin: 0 auto; padding: 24px 0 60px; }
-.markdown-body { overflow-wrap: break-word; word-wrap: break-word; }
-.markdown-body h1,.markdown-body h2 { border-bottom:1px solid #21262d; padding-bottom:.3em; margin-top:24px; }
-.markdown-body h2 { font-size:1.5em; }
-.markdown-body table { border-collapse:collapse; display:block; width:max-content; max-width:100%; overflow:auto; }
-.markdown-body th,.markdown-body td { border:1px solid #30363d; padding:6px 13px; }
-.markdown-body th { background:#161b22; }
-.markdown-body tr:nth-child(2n) { background:#161b22; }
-.markdown-body a { color:#58a6ff; text-decoration:none; }
-.markdown-body img { max-width:100%; box-sizing:content-box; }
-.markdown-body code { background:#161b22; padding:.2em .4em; border-radius:6px; font-size:85%; }
-.markdown-body pre { background:#161b22; padding:16px; border-radius:6px; overflow:auto; }
-.markdown-body pre code { background:none; padding:0; }
-.markdown-body hr { height:.25em; background:#30363d; border:0; margin:24px 0; }
-.markdown-body div[align=center] { text-align:center; }
-.markdown-body p { max-width: 100%; }
-"""
+# The README column is 846px on a desktop profile page. GitHub centres it.
+COLUMN = 846
+COLUMN_CSS = github_css.PREVIEW_CSS
 
 
 class QuietHandler(http.server.SimpleHTTPRequestHandler):
@@ -192,6 +177,22 @@ def audit_layout(report: Report, tag: str, width: int) -> None:
     over = [o for o in data["overflow"] if o["tag"] not in ("thead", "tbody", "tr", "th", "td")]
     report.check("nothing overflows the column", not over, str(over[:3]))
 
+    # "Section titles are LABELS, not headings ... the content in the section
+    # should dominate, not the title." GitHub's body is 14px (the f5 class)
+    # and its heading sizes are em-based, so the rule is expressed as a ratio:
+    # a section title may sit at most ONE major-third step (1.25x) above the
+    # body text. That admits h3 (1.25em) and rejects h2 (1.5em), which also
+    # drags a full-width rule across the page.
+    headings = data.get("headings", [])
+    MAX_STEP = 1.25
+    loud = [f"{h['tag']} {h.get('step', 0)}x '{h['text']}'"
+            for h in headings if h.get("step", 0) > MAX_STEP + 0.001]
+    report.check("section titles stay within one type-scale step of the body",
+                 not loud, str(loud[:4]))
+    ruled = [f"{h['tag']} '{h['text']}'" for h in headings if h.get("rule")]
+    report.check("section titles carry no full-width rule", not ruled, str(ruled[:4]))
+    report.check("the page has section titles", bool(headings), f"{len(headings)} found")
+
     if not mobile:
         out = [f"{p['charsPerLine']}ch" for p in data["prose"] if not p["inBand"]]
         report.check("prose stays in the 40-78ch band", not out, str(out[:5]))
@@ -237,10 +238,9 @@ def main() -> int:
             link.unlink()
         link.symlink_to(ROOT / "assets", target_is_directory=True)
         (preview / "index.html").write_text(
-            f"<!DOCTYPE html><html><head><meta charset='utf-8'>"
-            f"<meta name='viewport' content='width=device-width, initial-scale=1'>"
-            f"<style>{GITHUB_CSS}</style></head><body>"
-            f"<div id='wrap' class='markdown-body'>{html}</div></body></html>",
+            github_css.preview_html(html, "dark").replace(
+                "</style>", COLUMN_CSS + "</style>"
+            ),
             encoding="utf-8",
         )
         httpd = serve(preview)

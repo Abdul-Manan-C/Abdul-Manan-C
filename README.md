@@ -29,7 +29,7 @@ Building [AUTOCORE](https://github.com/Abdul-Manan-C/autocore) v4 and the<br />
 
 </div>
 
-## Six platforms in production
+### Six platforms in production
 
 Full builds for founders, stores and agencies.<br />
 Direction, design, code, deployment, DNS, email, aftercare.
@@ -93,7 +93,7 @@ Direction, design, code, deployment, DNS, email, aftercare.
 
 Case studies, pricing and process: [cynex.online/works](https://www.cynex.online/works)
 
-## Toolbelt
+### Toolbelt
 
 <picture>
   <source media="(max-width: 767px)" srcset="./assets/stack.mobile.svg">
@@ -102,7 +102,7 @@ Case studies, pricing and process: [cynex.online/works](https://www.cynex.online
 
 <sub>Official brand marks, grouped by purpose.</sub>
 
-## Selected work
+### Selected work
 
 <table>
   <tr>
@@ -149,7 +149,7 @@ Case studies, pricing and process: [cynex.online/works](https://www.cynex.online
   </tr>
 </table>
 
-## Security practice
+### Security practice
 
 Offensive tooling and hands-on practice, not theory.
 
@@ -159,11 +159,14 @@ Offensive tooling and hands-on practice, not theory.
 
 <a href="https://tryhackme.com/p/mananhanif01" target="_blank"><img src="https://tryhackme-badges.s3.amazonaws.com/mananhanif01.png?v=2" alt="TryHackMe badge for the profile mananhanif01" width="329" referrerpolicy="no-referrer" /></a>
 
-## Every public repository
+### Every public repository
 
-Straight from the GitHub API, refreshed every morning.
+Straight from the GitHub API, refreshed every morning and sorted by stars.
 
 <!-- AUTO:REPOS:START -->
+<details>
+<summary><b>All 14 public repositories</b> &mdash; what it is, the stack, stars and last push</summary>
+
 | Repository | What it is | Stack | ★ | Last push |
 |---|---|---|---|---|
 | **[autocore](https://github.com/Abdul-Manan-C/autocore)** | Automated pentest recon & enumeration orchestrator — bash v3 and an AI-powered Python TUI v4 with auto OS detection. | bash · python · textual · llm | 5 | 8mo ago |
@@ -180,21 +183,22 @@ Straight from the GitHub API, refreshed every morning.
 | **[flamehouse](https://github.com/Abdul-Manan-C/flamehouse)** | Restaurant site template with a one-file token theme system (restaurant, gym, cafe). | html · css · js | 1 | 8mo ago |
 | **[movix](https://github.com/Abdul-Manan-C/movix)** | Movix Studio — premium video agency site, static build. | html · css · js | 0 | 7mo ago |
 | **[movixstudio](https://github.com/Abdul-Manan-C/movixstudio)** | Boutique video-editing agency site — hooks, stories and results. | vite · typescript | 0 | 4mo ago |
+
+</details>
 <!-- AUTO:REPOS:END -->
 
-## Activity
+### Activity
 
 <picture>
   <source media="(max-width: 767px)" srcset="./assets/activity.mobile.svg">
-  <img src="./assets/activity.svg" alt="Contribution activity — 326 contributions over the last 12 months" width="846" />
+  <img src="./assets/activity.svg" alt="Contribution activity — 327 contributions over the last 12 months" width="846" />
 </picture>
 
-## How this README is built
+### How this README is built
 
-A README cannot run JavaScript, but it can load SVG images —<br />
-and an SVG carries its own CSS animation, embedded fonts and<br />
-counters. Every visual is drawn by one script from real data,<br />
-and GitHub Actions redraws it every morning.
+A README cannot run JavaScript, but it can load SVG — and an SVG<br />
+carries its own CSS animation, embedded fonts and live counters. One<br />
+script draws every visual from real GitHub data; Actions redraws it daily.
 
 ```text
 GitHub API ──┐
@@ -207,11 +211,10 @@ sites ─→ cdp_capture.mjs ─→ screens/
          └→ shrink_screens.py → screens/m/
 ```
 
-No badge wall, no third-party card service, no manual editing —<br />
-every number above is read from GitHub at build time, and the brand<br />
-marks come from the official Simple Icons set.
+No badge wall, no third-party card service, no manual editing — the<br />
+brand marks come from the official Simple Icons set.
 
-## Connect
+### Connect
 
 <div align="center">
 
