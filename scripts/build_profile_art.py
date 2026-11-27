@@ -368,6 +368,11 @@ def _subset_base64(font_path: Path, characters: set) -> str:
         from fontTools.ttLib import TTFont
 
         font = TTFont(io.BytesIO(raw))
+        # Without this the head table's modified timestamp is stamped with the
+        # current time, so every daily rebuild produces a byte-different (but
+        # visually identical) font and the repository history fills up with
+        # noise. The artwork must be reproducible.
+        font.recalcTimestamp = False
         options = Options()
         options.flavor = "woff2"
         options.layout_features = ["kern", "liga", "calt", "ccmp", "locl"]
@@ -377,6 +382,7 @@ def _subset_base64(font_path: Path, characters: set) -> str:
         options.recalc_bounds = False
         options.name_IDs = ["*"]
         options.drop_tables = []
+        options.recalc_timestamp = False
         subsetter = Subsetter(options=options)
         subsetter.populate(unicodes={ord(char) for char in characters if ord(char) > 31})
         subsetter.subset(font)
@@ -1274,6 +1280,30 @@ def write(path: Path, content: str) -> None:
     path.write_text(content, encoding="utf-8")
 
 
+def write_snapshot(path: Path, snapshot: dict) -> None:
+    """Write the live snapshot, but only move its clock when the data moved.
+
+    ``generated_at`` records when this snapshot was taken. If nothing about the
+    profile actually changed, the previous snapshot is still an accurate
+    description of the account, so its timestamp is kept. That keeps the
+    nightly rebuild byte-stable and stops the workflow from committing a
+    one-line timestamp diff every morning.
+    """
+    payload = json.dumps(snapshot, indent=2) + "\n"
+    if path.exists():
+        try:
+            previous = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            previous = None
+        if isinstance(previous, dict):
+            old = {k: v for k, v in previous.items() if k != "generated_at"}
+            new = {k: v for k, v in snapshot.items() if k != "generated_at"}
+            if old == new and previous.get("generated_at"):
+                snapshot = dict(snapshot, generated_at=previous["generated_at"])
+                payload = json.dumps(snapshot, indent=2) + "\n"
+    write(path, payload)
+
+
 def main() -> int:
     snapshot_path = ROOT / "data" / "profile.json"
     try:
@@ -1282,7 +1312,7 @@ def main() -> int:
         print(f"warning: live fetch failed ({exc}); keeping previous snapshot", file=sys.stderr)
         return 0
 
-    write(snapshot_path, json.dumps(snapshot, indent=2) + "\n")
+    write_snapshot(snapshot_path, snapshot)
 
     write(ROOT / "assets" / "hero.svg", render_hero(snapshot))
     write(ROOT / "assets" / "hero.mobile.svg", render_hero_mobile(snapshot))
